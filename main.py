@@ -1,7 +1,11 @@
 from machine import Pin
 import time
+
+p0 = Pin(2, Pin.OUT) 
+import time
 import os
 import json
+import wifi as wf
 
 VERNR = "0.0"
 __DATE__ = "15.12.2023"
@@ -12,8 +16,6 @@ MyName = "\r\n******************************************************************
               "*******************************     E S P N o d e      ******************************\r\n" \
               "*************************************************************************************"
 Version = f"\r\n-----> V {VERNR} vom {__DATE__} {__TIME__} {RELEASE} <-----\r\n"
-
-p0 = Pin(2, Pin.OUT) 
 
 start = time.ticks_ms()
 
@@ -54,22 +56,8 @@ with open("myfile.txt", "r") as f:
 print(edata)
 print(edata["hostname"])
   
-  
-def do_connect(SSID, Passw):
-    import network
-    wlan = network.WLAN(network.STA_IF)
-    wlan.active(True)
-    if not wlan.isconnected():
-        print(f'\n\r\nconnecting to network {SSID} ', end='')
-        wlan.connect(SSID, Passw)
-        while not wlan.isconnected():
-            p0.value(not p0.value())
-            print(".", end='')
-            time.sleep(0.1)
-    print('\r\nnetwork config:', wlan.ifconfig())
-
 #do_connect("TK800", "Lanecharge")
-do_connect("janzneu", "D1AFFE1234!")
+wf.do_connect("janzneu", "D1AFFE1234!")
 
     
 while True:
