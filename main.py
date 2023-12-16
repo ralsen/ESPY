@@ -76,3 +76,4 @@ while True:
     print(f"elapsed time: {(time.ticks_ms() - start) / 1000}")    
     p0.value(not p0.value())
     time.sleep(0.25)
+ppp
