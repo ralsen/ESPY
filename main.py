@@ -42,7 +42,7 @@ data["MeasuringCycle"] = "5"
 data ["TransmitCycle"] = "300"
 data["PageReload"] = "10"
 data["APtimeout"] = "60"
-data["hash"] = ""
+data["hash-hash"] = ""
 
 with open("myfile.txt", "w") as f:
     json.dump(data, f)
