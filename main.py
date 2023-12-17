@@ -32,35 +32,12 @@ os.umount('/')
 os.VfsLfs2.mkfs(bdev)
 os.mount(bdev, '/')
 
-data = dict()
-data["SSID"] = "ich bins"
-data["password"] = "PW"
-data["hostname"] = "MyName"
-data["APName"] = "ESPY_NET"
-data["MACAddress"] = "xx.xx.xx"
-data["ChipID"] = "666"
-data["localIP"] = "0.0.0.0"
-data["fixip"] = "1.1.1.1"
-data["server"] = "servername or IP???"
-data["port"] = "number"
-data["MeasuringCycle"] = "5"
-data["TransmitCycle"] = "300"
-data["PageReload"] = "10"
-data["hash"] = "0815"
-
-
-with open("config.json", "w") as f:
-    json.dump(data, f)
-
-with open("config.json", "r") as f:
-    edata = json.load(f)
-
-print(f"vor der Berechnung: {edata}")
-print(cfg.testHash(edata))
-cfg.calcHash(edata)
-print(f"nach der Berechnung: {edata}‚")
-print(cfg.testHash(edata))
-
+cfg.SetToDefault()
+cfg.saveConfig()
+cfg.loadConfig()
+print(cfg.confData)
+#cfg.eraseConfig()
+#print(cfg.confData)
 
 wf.do_connect("janzneu", "D1AFFE1234!")
 
