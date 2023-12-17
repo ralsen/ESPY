@@ -1,5 +1,6 @@
 from machine import Pin
 import time
+import timers as TM
 
 p0 = Pin(2, Pin.OUT) 
 import time
@@ -59,7 +60,23 @@ print(edata["hostname"])
 #do_connect("TK800", "Lanecharge")
 wf.do_connect("janzneu", "D1AFFE1234!")
 
-    
+
+def task1(timer):
+    print(f"task {timer1.timer_id} - {timer1.name} executed")
+def task2(timer):
+    print(f"task {timer2.timer_id} - {timer2.name} executed")
+def task3(timer):
+    print(f"task {timer3.timer_id} - {timer3.name} executed")
+
+timer1 = TM.TI("blink schnell", 1000, task1)
+timer2 = TM.TI("blink mittel", 2000, task2)
+timer3 = TM.TI("blink langsam", 3000, task3)
+   
+timer1.start()
+timer2.start()
+timer3.start()
+
+cnt = 50
 while True:
     print(f"elapsed time: {(time.ticks_ms() - start) / 1000}")    
     p0.value(not p0.value())
