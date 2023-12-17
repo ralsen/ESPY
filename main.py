@@ -31,14 +31,20 @@ os.VfsLfs2.mkfs(bdev)
 os.mount(bdev, '/')
 
 data = dict()
-data["hostname"] = "ich bins"
-data["server"] = "servername or IP"
-data["service"] = "service number"
+data["SSID"] = "ich bins"
+data["password"] = "PW"
+data["hostname"] = "MyName"
+data["APName"] = "ESPY_NET"
+data["MACAddress"] = "xx.xx.xx"
+data["ChipID"] = "666"
+data["localIP"] = "0.0.0.0"
+data["fixip"] = "1.1.1.1"
+data["server"] = "servername or IP???"
+data["port"] = "number"
 data["MeasuringCycle"] = "5"
-data ["TransmitCycle"] = "300"
+data["TransmitCycle"] = "300"
 data["PageReload"] = "10"
-data["APtimeout"] = "60"
-data["hash-hash"] = ""
+data["hash"] = "0815"
 
 with open("myfile.txt", "w") as f:
     json.dump(data, f)
