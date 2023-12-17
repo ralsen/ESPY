@@ -1,27 +1,20 @@
 from machine import Pin
 import time
-import timers as TM
 
-p0 = Pin(2, Pin.OUT) 
 import time
 import os
 import json
+
 import wifi as wf
+import settings as set
+import timers as TM
 
-VERNR = "0.0"
-__DATE__ = "15.12.2023"
-__TIME__ = "14:01"
-RELEASE = "Debug"
-
-MyName = "\r\n*************************************************************************************\r\n" \
-              "*******************************     E S P N o d e      ******************************\r\n" \
-              "*************************************************************************************"
-Version = f"\r\n-----> V {VERNR} vom {__DATE__} {__TIME__} {RELEASE} <-----\r\n"
+p0 = Pin(2, Pin.OUT) 
 
 start = time.ticks_ms()
 
-print(MyName)
-print(Version)
+print(set.MyName)
+print(set.Version)
 
 print("Key service started!")            
 print("10ms Timer service started!")
@@ -76,7 +69,6 @@ timer1.start()
 timer2.start()
 timer3.start()
 
-cnt = 50
 while True:
     print(f"elapsed time: {(time.ticks_ms() - start) / 1000}")    
     p0.value(not p0.value())
