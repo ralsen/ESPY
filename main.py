@@ -10,6 +10,7 @@ import settings as set
 import timers as TM
 
 p0 = Pin(2, Pin.OUT) 
+p1 = Pin(0, Pin.IN)
 
 start = time.ticks_ms()
 
@@ -46,11 +47,11 @@ data["TransmitCycle"] = "300"
 data["PageReload"] = "10"
 data["hash"] = "0815"
 
-with open("myfile.json", "w") as f:
+with open("config.json", "w") as f:
     json.dump(data, f)
     #f.write(str(data))
 
-with open("myfile.json", "r") as f:
+with open("config.json", "r") as f:
     edata = json.load(f)
 
 print(edata)
@@ -77,5 +78,9 @@ timer3.start()
 
 while True:
     print(f"elapsed time: {(time.ticks_ms() - start) / 1000}")    
+    if p1.value():
+        print("Button is released.")
+    else:
+        print("Button is pressed.")
     p0.value(not p0.value())
     time.sleep(0.25)
