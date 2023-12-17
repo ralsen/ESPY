@@ -46,11 +46,11 @@ data["TransmitCycle"] = "300"
 data["PageReload"] = "10"
 data["hash"] = "0815"
 
-with open("myfile.txt", "w") as f:
+with open("myfile.json", "w") as f:
     json.dump(data, f)
     #f.write(str(data))
 
-with open("myfile.txt", "r") as f:
+with open("myfile.json", "r") as f:
     edata = json.load(f)
 
 print(edata)
