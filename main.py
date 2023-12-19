@@ -4,11 +4,15 @@ import time
 import time
 import os
 import json
+import config
 
 import wifi as wf
+import webserver as ws
 import settings as set
 import timers as TM
 import config as cfg
+import webserver
+
 
 p0 = Pin(2, Pin.OUT) 
 p1 = Pin(0, Pin.IN)
@@ -20,42 +24,51 @@ print(set.Version)
 
 print("Key service started!")            
 print("10ms Timer service started!")
+TM.downTimers()
+
 print("Hash FAILED !!!")
-print( "Hello from device: " )
+print("Hello from device: " )
 print("DEV_TYPE")
 print("Function:          ")
 print("MAC-Adress:        " )
 print("1s timer services started!")
 print("\r\neverything is initialized, let's go ahead now ->\r\n")
 
-os.umount('/')
-os.VfsLfs2.mkfs(bdev)
-os.mount(bdev, '/')
+print("---> Directory:")
+print(os.listdir('/'))
 
-cfg.SetToDefault()
-cfg.saveConfig()
-cfg.loadConfig()
-print(cfg.confData)
-#cfg.eraseConfig()
-#print(cfg.confData)
 
-wf.do_connect("janzneu", "D1AFFE1234!")
+def LED_Timer(timer):
+    #print(f"task-ID: {blink.timer_id} - {blink.name} executed")
+    p0.value(not p0.value())
 
-def task1(timer):
-    print(f"task {timer1.timer_id} - {timer1.name} executed")
-def task2(timer):
-    print(f"task {timer2.timer_id} - {timer2.name} executed")
-def task3(timer):
-    print(f"task {timer3.timer_id} - {timer3.name} executed")
+if (not cfg.loadConfig()):
+    print("!!! P A N I K !!! could not load configuration")
+    panik =  TM.freeTimer("Panik", 25, LED_Timer)
+    panik.start()
+    while True:
+        pass
 
-timer1 = TM.TI("blink schnell", 1000, task1)
-timer2 = TM.TI("blink mittel", 2000, task2)
-timer3 = TM.TI("blink langsam", 3000, task3)
-   
-timer1.start()
-timer2.start()
-timer3.start()
+wifi = wf.do_connect(cfg.confData["SSID"], cfg.confData["password"])
+if (wifi == None):
+    print("OJE!!!")
+else:
+    print(f"\r\n{wifi}")
 
+TM.downTimers.downCnters["noch mehr"] = 300
+
+def taskexample(timer):
+    #print(f"task-ID: {timerexample.timer_id} - {timerexample.name} executed")
+    pass
+
+blink = TM.freeTimer("Blinker", 250, LED_Timer)
+blink.start()
+
+timerexample = TM.freeTimer("Timer_Example", 5000, taskexample)
+timerexample.start()
+
+ws.webserv()
+    
 while True:
     """
     print(f"elapsed time: {(time.ticks_ms() - start) / 1000}")    
@@ -64,5 +77,13 @@ while True:
     else:
         print("Button is pressed.")
     """
-    p0.value(not p0.value())
+    try:
+        if TM.downTimers.downCnters["noch mehr"] == 0:
+            TM.downTimers.downCnters.pop("noch mehr", "")
+    except:
+        pass
+    print("active downConuters:")
+    for key, value in TM.downTimers.downCnters.items():
+        print(f"{key} = {value}")
+    print("")
     time.sleep(0.25)

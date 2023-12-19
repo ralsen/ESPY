@@ -1,17 +1,32 @@
 from machine import Pin
 import time
+import network
+import socket
 
-p0 = Pin(2, Pin.OUT) 
+import timers as TM
+
+LED_Pin = Pin(2, Pin.OUT) 
+
+def connectBlink(timer):
+    LED_Pin.value(not LED_Pin.value())
+
+blink = TM.freeTimer("Blinker", 250, connectBlink)
 
 def do_connect(SSID, Passw):
-    import network
+    blink = TM.freeTimer("Blinker", 100, connectBlink)
+    blink.start()
     wlan = network.WLAN(network.STA_IF)
     wlan.active(True)
     if not wlan.isconnected():
         print(f'\n\r\nconnecting to network {SSID} ', end='')
+        TM.downTimers.downCnters["WLAN"] = 3000
         wlan.connect(SSID, Passw)
         while not wlan.isconnected():
-            p0.value(not p0.value())
             print(".", end='')
             time.sleep(0.1)
-    print('\r\nnetwork config:', wlan.ifconfig())
+            if(TM.downTimers.downCnters["WLAN"] == 0):
+                blink.stop()
+                return None
+    blink.stop()
+    return(wlan.ifconfig())
+
