@@ -11,7 +11,7 @@ import webserver as ws
 import settings as set
 import timers as TM
 import config as cfg
-import webserver
+
 
 
 p0 = Pin(2, Pin.OUT) 
@@ -24,6 +24,9 @@ print(set.Version)
 
 print("Key service started!")            
 print("10ms Timer service started!")
+
+cf = cfg.cfg()
+
 TM.downTimers()
 
 print("Hash FAILED !!!")
@@ -37,28 +40,34 @@ print("\r\neverything is initialized, let's go ahead now ->\r\n")
 print("---> Directory:")
 print(os.listdir('/'))
 
-
 def LED_Timer(timer):
     #print(f"task-ID: {blink.timer_id} - {blink.name} executed")
     p0.value(not p0.value())
 
-if (not cfg.loadConfig()):
+cfgData = cf.loadConfig()
+if (not cfgData):
     print("!!! P A N I K !!! could not load configuration")
     panik =  TM.freeTimer("Panik", 25, LED_Timer)
     panik.start()
     while True:
         pass
 
-wifi = wf.do_connect(cfg.confData["SSID"], cfg.confData["password"])
+wifi = wf.do_connect(cfgData["SSID"], cfgData["password"])
 if (wifi == None):
     print("OJE!!!")
 else:
     print(f"\r\n{wifi}")
 
+cfgData["localIP"] = wifi[0]
+cfgData["server"] = wifi[2]
+cf.saveConfig(cfgData)
+
+print(f"running with configuration:\r\n{cfgData}")
+
 TM.downTimers.downCnters["noch mehr"] = 300
 
 def taskexample(timer):
-    #print(f"task-ID: {timerexample.timer_id} - {timerexample.name} executed")
+    print(f"task-ID: {timerexample.timer_id} - {timerexample.name} executed")
     pass
 
 blink = TM.freeTimer("Blinker", 250, LED_Timer)
@@ -67,7 +76,10 @@ blink.start()
 timerexample = TM.freeTimer("Timer_Example", 5000, taskexample)
 timerexample.start()
 
-ws.webserv()
+ws.webserv(cfgData)
+#wstimer = TM.freeTimer("WebServer", 100, ws.webserv.do_web)
+#print(f"---> wstimer: {wstimer}")
+#ws.webserv.do_web()
     
 while True:
     """
@@ -86,4 +98,4 @@ while True:
     for key, value in TM.downTimers.downCnters.items():
         print(f"{key} = {value}")
     print("")
-    time.sleep(0.25)
+    time.sleep(5)
