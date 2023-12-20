@@ -3,8 +3,6 @@ from machine import Pin
 
 import config as cfg
 
-# import urequests
-# response = urequests.post("http://192.168.2.99", data = "some dummy content")
 class webserv():
     s = None
     cfgData = None

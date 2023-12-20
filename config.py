@@ -40,7 +40,9 @@ class cfg():
         confData = dict()
     #    confData["SSID"] = "TK800"
     #    confData["password"] = "Lanecharge"
+        confData["name"] = "Rumpelpumpel"
         confData["SSID"] = "janzneu"
+        confData["Type"] = "DS1820-0"
         confData["password"] = "D1AFFE1234!"
         confData["hostname"] = "MyName"
         confData["APName"] = "ESPY_NET"

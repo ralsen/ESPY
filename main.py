@@ -5,6 +5,7 @@ import time
 import os
 import json
 import config
+import urequests
 
 import wifi as wf
 import webserver as ws
@@ -66,15 +67,23 @@ print(f"running with configuration:\r\n{cfgData}")
 
 TM.downTimers.downCnters["noch mehr"] = 300
 
+cfgData["WiFi"] = 0
+
 def taskexample(timer):
     print(f"task-ID: {timerexample.timer_id} - {timerexample.name} executed")
+    cfgData["WiFi"] = cfgData["WiFi"] + 1
+    response = urequests.post("http://192.168.2.87:8080", json=cfgData)
+    print(response.content)
     pass
 
-blink = TM.freeTimer("Blinker", 250, LED_Timer)
+blink = TM.freeTimer("Blinker", 500, LED_Timer)
 blink.start()
 
 timerexample = TM.freeTimer("Timer_Example", 5000, taskexample)
 timerexample.start()
+
+response = urequests.post("http://192.168.2.87:8080", json=cfgData)
+print(response.content)
 
 ws.webserv(cfgData)
 #wstimer = TM.freeTimer("WebServer", 100, ws.webserv.do_web)
