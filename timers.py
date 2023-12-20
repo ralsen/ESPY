@@ -24,7 +24,7 @@ class freeTimer():
         self.name = name        
 
     def start(self):
-        print(f"starting timer <{self.name}>")
+        print(f"starting timer <{self.name}> with {self.period}ms")
         self.timer.init(period=self.period, mode=machine.Timer.PERIODIC, callback=self.callback)
 
     def stop(self):
