@@ -1,15 +1,15 @@
 import machine
 
 class downTimers():
-    downCnters = dict() # general purpose timer field, will be counted down til zero
+    downCnter = dict() # general purpose timer field, will be counted down til zero
     def __init__(self):
         downTimers.gpt = freeTimer("downTimerField", 10, downTimers.downCnt)
         downTimers.gpt.start()
         
     def downCnt(self):     
-        for key, value in downTimers.downCnters.items():
-            if downTimers.downCnters[key]:
-                downTimers.downCnters[key] -= 1
+        for key, value in downTimers.downCnter.items():
+            if downTimers.downCnter[key]:
+                downTimers.downCnter[key] -= 1
                 
 class freeTimer():
     id = 0

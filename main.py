@@ -82,7 +82,7 @@ def handle_uptimer(timer):
 uptimer = TM.freeTimer('Uptimer', 1000, handle_uptimer)
 uptimer.start()
 
-TM.downTimers.downCnters["noch mehr"] = 300
+TM.downTimers.downCnter["noch mehr"] = 300
 
 cfgData["WiFi"] = 0
 
@@ -116,12 +116,12 @@ while True:
         print("Button is pressed.")
     """
     try:
-        if TM.downTimers.downCnters["noch mehr"] == 0:
-            TM.downTimers.downCnters.pop("noch mehr", "")
+        if TM.downTimers.downCnter["noch mehr"] == 0:
+            TM.downTimers.downCnter.pop("noch mehr", "")
     except:
         pass
     print("active downConuters:")
-    for key, value in TM.downTimers.downCnters.items():
+    for key, value in TM.downTimers.downCnter.items():
         print(f"{key} = {value}")
     print("")
     time.sleep(5)

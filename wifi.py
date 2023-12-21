@@ -17,12 +17,12 @@ def do_connect(SSID, Passw):
     wlan.active(True)
     if not wlan.isconnected():
         print(f'\n\rconnecting to network {SSID} - {Passw}', end='')
-        TM.downTimers.downCnters["WLAN"] = 3000
+        TM.downTimers.downCnter["WLAN"] = 3000
         wlan.connect(SSID, Passw)
         while not wlan.isconnected():
             print(".", end='')
             time.sleep(0.1)
-            if(TM.downTimers.downCnters["WLAN"] == 0):
+            if(TM.downTimers.downCnter["WLAN"] == 0):
                 print(" ")
                 blink.stop()
                 return None
