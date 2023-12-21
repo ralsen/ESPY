@@ -28,4 +28,4 @@ def do_connect(SSID, Passw):
                 return None
     print(" ")
     blink.stop()
-    return(wlan.ifconfig())
+    return(wlan)

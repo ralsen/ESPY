@@ -2,14 +2,17 @@ import socket
 from machine import Pin
 
 import config as cfg
+import settings as sett
 
 class webserv():
     s = None
     cfgData = None
+    sysData = None
     import html
-    def __init__(self, data):
+    def __init__(self, data, sysData):
         print('=====> S O C K E T: ')
         self.cfgData = data
+        self.sysData = sysData
         webserv.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         webserv.s.bind(('', 80))
         webserv.s.listen(5)
@@ -51,4 +54,19 @@ class webserv():
         st = st.replace('{mainpage}', webserv.html.InfoMenu)
         st = st.replace('{apppage}', '')
         st = st.replace('{confpage}', '')
+        st = st.replace('{content}', self.infoPage())
+        return st
+    
+    def infoPage(self):
+        st = '</h3>'
+        st += sett.Version + '<br><br><br>Type: ' + sett.FNC_TYPE + '<br>Hardw: ' + sett.DEV_TYPE
+        st += '<br>Chip-ID: ' + self.cfgData['chipID']
+        st += '<br>MAC-Address: ' + self.cfgData['mac']
+        st += '<br>Network:     ' + self.cfgData['SSID']
+        st += '<br>Devicename:  ' + self.cfgData['hostname']
+        st += '<br>AP-Name:     ' + self.cfgData['APName']
+        st += '<br>cfg-Size:    ' + '1234567890'
+        st += '<br>Hash:       ' + hex(self.cfgData['hash'])
+        st += '<br>'
+        st += 'uptime: ' + str(self.sysData['uptime'])
         return st
