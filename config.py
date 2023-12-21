@@ -42,10 +42,10 @@ class cfg():
     def SetToDefault(self):
         print('SetToDefault()')
         confData = dict()
-        confData['SSID'] = 'TK800'
-        confData['password'] = 'Lanecharge'
-    #    confData['SSID'] = 'janzneu'
-    #    confData['password'] = 'D1AFFE1234!'
+    #    confData['SSID'] = 'TK800'
+    #    confData['password'] = 'Lanecharge'
+        confData['SSID'] = 'janzneu'
+        confData['password'] = 'D1AFFE1234!'
 
         confData['name'] = 'MyName'
         confData['Type'] = 'DS1820-0'
