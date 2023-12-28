@@ -7,12 +7,10 @@ import settings as sett
 class webserv():
     s = None
     cfgData = None
-    sysData = None
     import html
-    def __init__(self, data, sysData):
+    def __init__(self, data):
         print('=====> S O C K E T: ')
         self.cfgData = data
-        self.sysData = sysData
         webserv.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         webserv.s.bind(('', 80))
         webserv.s.listen(5)
@@ -61,12 +59,12 @@ class webserv():
         st = '</h3>'
         st += sett.Version + '<br><br><br>Type: ' + sett.FNC_TYPE + '<br>Hardw: ' + sett.DEV_TYPE
         st += '<br>Chip-ID: ' + self.cfgData['chipID']
-        st += '<br>MAC-Address: ' + self.cfgData['mac']
+        st += '<br>MAC-Address: ' + self.cfgData['MAC']
         st += '<br>Network:     ' + self.cfgData['SSID']
         st += '<br>Devicename:  ' + self.cfgData['hostname']
         st += '<br>AP-Name:     ' + self.cfgData['APName']
         st += '<br>cfg-Size:    ' + '1234567890'
         st += '<br>Hash:       ' + hex(self.cfgData['hash'])
         st += '<br>'
-        st += 'uptime: ' + str(self.sysData['uptime'])
+        st += 'uptime: ' + str(self.cfgData['uptime'])
         return st
