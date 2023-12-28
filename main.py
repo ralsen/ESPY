@@ -27,9 +27,6 @@ print(set.Version)
 print("Key service started!")            
 print("10ms Timer service started!")
 
-sysData = dict()
-sysData['uptime'] = 0
-
 def byte2str (value):
     strval = ''
     for byte in value:
@@ -51,6 +48,8 @@ if (not cfgData):
     panik.start()
     while True:
         pass
+    
+cfgData['uptime'] = 0
 
 wifi = wf.do_connect(cfgData["SSID"], cfgData["password"])
 if (wifi == None):
@@ -58,10 +57,10 @@ if (wifi == None):
 else:
     print(f"\r\n{wifi.ifconfig()}")
 
-cfgData["localIP"] = wifi.ifconfig()[0]
-cfgData["server"] = wifi.ifconfig()[2]
-cfgData["mac"] = byte2str(wifi.config('mac'))
-cfgData['hostname'] = cfgData['name'] + '_' + cfgData['mac'].replace(':', '_')
+cfgData["IP"] = wifi.ifconfig()[0]
+cfgData["Server"] = wifi.ifconfig()[2]
+cfgData["MAC"] = byte2str(wifi.config('mac'))
+cfgData['hostname'] = cfgData['name'] + '_' + cfgData['MAC'].replace(':', '_')
 cfgData['chipID'] = byte2str(machine.unique_id())
 cf.saveConfig(cfgData)
 
@@ -69,7 +68,7 @@ print(f"running with configuration:\r\n{cfgData}")
 print(f"Hello from device: {cfgData['hostname']}" )
 print("DEV_TYPE: ")
 print("FNC_TYPE: ")
-print(f"MAC-Adress:        {cfgData['mac']}" )
+print(f"MAC-Adress:        {cfgData['MAC']}" )
 print("1s timer services started!")
 print("\r\neverything is initialized, let's go ahead now ->\r\n")
 
@@ -77,7 +76,7 @@ print("---> Directory:")
 print(os.listdir('/'))
 
 def handle_uptimer(timer):
-    sysData['uptime'] += 1
+    cfgData['uptime'] += 1
     
 uptimer = TM.freeTimer('Uptimer', 1000, handle_uptimer)
 uptimer.start()
@@ -88,9 +87,15 @@ cfgData["WiFi"] = 0
 
 def taskexample(timer):
     print(f"task-ID: {timerexample.timer_id} - {timerexample.name} executed")
-    cfgData["WiFi"] = cfgData["WiFi"] + 1
-    #response = urequests.post("http://192.168.2.87:8080", json=cfgData)
-    #print(response.content)
+    cfgData['WiFi'] = 'SSID-Wert'
+    try:
+        print(f"sending to http://192.168.2.87:8081:\r\n{cfgData}")
+        #response = urequests.post('http://192.168.2.87:8080', json=cfgData)
+        #print(response.content)
+        cfgData['goodTrans'] += 1
+    except:
+        cfgData['badTrans'] += 1
+        print('habe niemanden erreicht')
     pass
 
 blink = TM.freeTimer("Blinker", 500, LED_Timer)
@@ -102,7 +107,7 @@ timerexample.start()
 #response = urequests.post("http://192.168.2.87:8080", json=cfgData)
 #print(response.content)
 
-ws.webserv(cfgData, sysData)
+ws.webserv(cfgData)
 #wstimer = TM.freeTimer("WebServer", 100, ws.webserv.do_web)
 #print(f"---> wstimer: {wstimer}")
 #ws.webserv.do_web()
