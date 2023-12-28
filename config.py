@@ -1,4 +1,5 @@
 import json
+import settings as set
 
 class cfg():
     confData = dict()
@@ -48,20 +49,26 @@ class cfg():
         confData['password'] = 'D1AFFE1234!'
 
         confData['name'] = 'MyName'
+        confData['IP'] = ''
         confData['Type'] = 'DS1820-0'
-        confData['hostname'] = 'MyName'
+        confData['Version'] = set.VERNR
+        confData['Hardware'] = set.DEV_TYPE
+        confData['Network'] = 'WiFi.SSID'
         confData['APName'] = 'ESPY_NET'
-        confData['mac'] = 'xx.xx.xx.xx.xx.xx'
-        confData['chipID'] = ''
-        confData['localIP'] = '0.0.0.0'
-        confData['fixip'] = '1.1.1.1'
-        confData['server'] = 'servername'
-        confData['port'] = 'number'
-        confData['MeasuringCycle'] = '5'
+        confData['MAC'] = 'xx.xx.xx.xx.xx.xx'
         confData['TransmitCycle'] = '300'
+        confData['MeasuringCycle'] = '5'
         confData['PageReload'] = '10'
-        confData['hash'] = '0815'
+        confData['hostname'] = 'MyName'
+        confData['fixip'] = '1.1.1.1'
+        confData['Server'] = 'servername'
+        confData['Port'] = 'number'
+        confData['uptime'] = 0
+        confData['delivPages'] = 0
+        confData['goodTrans'] = 0
+        confData['badTrans'] = 0
         confData['LED'] = True
+        confData['hash'] = '0815'
         self.saveConfig(confData)
 
     def calcHash(self):
