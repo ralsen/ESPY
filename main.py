@@ -26,6 +26,7 @@ print(set.Version)
 
 print("Key service started!")            
 print("10ms Timer service started!")
+print("1s timer services started!")
 
 def byte2str (value):
     strval = ''
@@ -64,12 +65,12 @@ cfgData['hostname'] = cfgData['name'] + '_' + cfgData['MAC'].replace(':', '_')
 cfgData['chipID'] = byte2str(machine.unique_id())
 cf.saveConfig(cfgData)
 
-print(f"running with configuration:\r\n{cfgData}")
-print(f"Hello from device: {cfgData['hostname']}" )
-print("DEV_TYPE: ")
-print("FNC_TYPE: ")
+print(f"\r\n---> Hello from device: {cfgData['hostname']} <---" )
+print(f"Architecture:      {cfgData['Architecture']}")
+print(f"DEV_TYPE:          {cfgData['Hardware']}")
+print(f"FNC_TYPE:          {cfgData['Type']} ")
 print(f"MAC-Adress:        {cfgData['MAC']}" )
-print("1s timer services started!")
+print(f"running with configuration:\r\n{cfgData}")
 print("\r\neverything is initialized, let's go ahead now ->\r\n")
 
 print("---> Directory:")
@@ -90,8 +91,8 @@ def taskexample(timer):
     cfgData['WiFi'] = 'SSID-Wert'
     try:
         print(f"sending to http://192.168.2.87:8081:\r\n{cfgData}")
-        #response = urequests.post('http://192.168.2.87:8080', json=cfgData)
-        #print(response.content)
+        response = urequests.post('http://192.168.2.87:8080', json=cfgData)
+        print(response.content)
         cfgData['goodTrans'] += 1
     except:
         cfgData['badTrans'] += 1
