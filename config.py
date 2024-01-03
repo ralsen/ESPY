@@ -1,4 +1,5 @@
 import json
+import sys
 import settings as set
 
 class cfg():
@@ -42,33 +43,8 @@ class cfg():
 
     def SetToDefault(self):
         print('SetToDefault()')
-        confData = dict()
-    #    confData['SSID'] = 'TK800'
-    #    confData['password'] = 'Lanecharge'
-        confData['SSID'] = 'janzneu'
-        confData['password'] = 'D1AFFE1234!'
-
-        confData['name'] = 'MyName'
-        confData['IP'] = ''
-        confData['Type'] = 'DS1820-0'
-        confData['Version'] = set.VERNR
-        confData['Hardware'] = set.DEV_TYPE
-        confData['Network'] = 'WiFi.SSID'
-        confData['APName'] = 'ESPY_NET'
-        confData['MAC'] = 'xx.xx.xx.xx.xx.xx'
-        confData['TransmitCycle'] = '300'
-        confData['MeasuringCycle'] = '5'
-        confData['PageReload'] = '10'
-        confData['hostname'] = 'MyName'
-        confData['fixip'] = '1.1.1.1'
-        confData['Server'] = 'servername'
-        confData['Port'] = 'number'
-        confData['uptime'] = 0
-        confData['delivPages'] = 0
-        confData['goodTrans'] = 0
-        confData['badTrans'] = 0
-        confData['LED'] = True
-        confData['hash'] = '0815'
+        confData = set.defData
+        confData['Architecture'] = sys.implementation._machine
         self.saveConfig(confData)
 
     def calcHash(self):
