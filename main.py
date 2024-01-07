@@ -36,17 +36,16 @@ def byte2str (value):
 
 cf = cfg.cfg()
 
-TM.downTimers()
+myTimers = TM.Timers()
 
 def LED_Timer(timer):
-    #print(f"task-ID: {blink.timer_id} - {blink.name} executed")
+    #print(f"task-ID: {blink['id']} - {blink['name']} executed")
     p0.value(not p0.value())
 
 cfgData = cf.loadConfig()
 if (not cfgData):
     print("!!! P A N I K !!! could not load configuration")
-    panik =  TM.freeTimer("Panik", 25, LED_Timer)
-    panik.start()
+    panik =  myTimers.append("Panik", 25, LED_Timer)
     while True:
         pass
     
@@ -79,40 +78,41 @@ print(os.listdir('/'))
 def handle_uptimer(timer):
     cfgData['uptime'] += 1
     
-uptimer = TM.freeTimer('Uptimer', 1000, handle_uptimer)
-uptimer.start()
+myTimers.append('Uptimer', 1000, handle_uptimer)
 
-TM.downTimers.downCnter["noch mehr"] = 300
+# TM.downTimers.downCnter["noch mehr"] = 300
 
 cfgData["WiFi"] = 0
 
 def taskexample(timer):
-    print(f"task-ID: {timerexample.timer_id} - {timerexample.name} executed")
+    print(f"task-ID: {timerexample['id']} - {timerexample['name']} executed")
     cfgData['WiFi'] = 'SSID-Wert'
     try:
-        print(f"sending to http://192.168.2.87:8081:\r\n{cfgData}")
-        response = urequests.post('http://192.168.2.87:8080', json=cfgData)
-        print(response.content)
+        #print(f"sending to http://192.168.2.87:8081:\r\n{cfgData}")
+        #response = urequests.post('http://192.168.2.87:8080', json=cfgData)
+        #print(response.content)
         cfgData['goodTrans'] += 1
     except:
         cfgData['badTrans'] += 1
         print('habe niemanden erreicht')
     pass
 
-blink = TM.freeTimer("Blinker", 500, LED_Timer)
-blink.start()
+blink = myTimers.append("Blinker", 500, LED_Timer)
 
-timerexample = TM.freeTimer("Timer_Example", 10000, taskexample)
-timerexample.start()
+timerexample = myTimers.append("Timer_Example", 10000, taskexample)
 
 #response = urequests.post("http://192.168.2.87:8080", json=cfgData)
 #print(response.content)
 
-ws.webserv(cfgData)
+#ws.webserv(cfgData)
 #wstimer = TM.freeTimer("WebServer", 100, ws.webserv.do_web)
 #print(f"---> wstimer: {wstimer}")
 #ws.webserv.do_web()
-    
+  
+#print(TM.Timers('Timer_1', 500, LED_Timer))  
+#TM.Timers('Timer_2', 1500, taskexample)  
+#print(TM.Timers.timers)
+
 while True:
     """
     print(f"elapsed time: {(time.ticks_ms() - start) / 1000}")    
@@ -121,13 +121,9 @@ while True:
     else:
         print("Button is pressed.")
     """
-    try:
-        if TM.downTimers.downCnter["noch mehr"] == 0:
-            TM.downTimers.downCnter.pop("noch mehr", "")
-    except:
-        pass
     print("active downConuters:")
-    for key, value in TM.downTimers.downCnter.items():
-        print(f"{key} = {value}")
+    #for t in TM.Timers.timers.items():
+    #    print (t)
+    print(TM.Timers.timers)
     print("")
     time.sleep(5)
