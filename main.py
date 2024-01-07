@@ -1,78 +1,129 @@
 from machine import Pin
+import machine
+import time
+
 import time
 import os
 import json
+import config
+import urequests
 
-VERNR = "0.0"
-__DATE__ = "15.12.2023"
-__TIME__ = "14:01"
-RELEASE = "Debug"
+import wifi as wf
+import webserver as ws
+import settings as set
+import timers as TM
+import config as cfg
 
-MyName = "\r\n*************************************************************************************\r\n" \
-              "*******************************     E S P N o d e      ******************************\r\n" \
-              "*************************************************************************************"
-Version = f"\r\n-----> V {VERNR} vom {__DATE__} {__TIME__} {RELEASE} <-----\r\n"
+
 
 p0 = Pin(2, Pin.OUT) 
+p1 = Pin(0, Pin.IN)
 
 start = time.ticks_ms()
 
-print(MyName)
-print(Version)
+print(set.MyName)
+print(set.Version)
 
 print("Key service started!")            
 print("10ms Timer service started!")
-print("Hash FAILED !!!")
-print( "Hello from device: " )
-print("DEV_TYPE")
-print("Function:          ")
-print("MAC-Adress:        " )
 print("1s timer services started!")
+
+def byte2str (value):
+    strval = ''
+    for byte in value:
+        strval += '{:02X}'.format(byte) + ":"
+    return strval[:-1]
+
+cf = cfg.cfg()
+
+myTimers = TM.Timers()
+
+def LED_Timer(timer):
+    #print(f"task-ID: {blink['id']} - {blink['name']} executed")
+    p0.value(not p0.value())
+
+cfgData = cf.loadConfig()
+if (not cfgData):
+    print("!!! P A N I K !!! could not load configuration")
+    panik =  myTimers.append("Panik", 25, LED_Timer)
+    while True:
+        pass
+    
+cfgData['uptime'] = 0
+
+wifi = wf.do_connect(cfgData["SSID"], cfgData["password"])
+if (wifi == None):
+    print("OJE!!!")
+else:
+    print(f"\r\n{wifi.ifconfig()}")
+
+cfgData["IP"] = wifi.ifconfig()[0]
+cfgData["Server"] = wifi.ifconfig()[2]
+cfgData["MAC"] = byte2str(wifi.config('mac'))
+cfgData['hostname'] = cfgData['name'] + '_' + cfgData['MAC'].replace(':', '_')
+cfgData['chipID'] = byte2str(machine.unique_id())
+cf.saveConfig(cfgData)
+
+print(f"\r\n---> Hello from device: {cfgData['hostname']} <---" )
+print(f"Architecture:      {cfgData['Architecture']}")
+print(f"DEV_TYPE:          {cfgData['Hardware']}")
+print(f"FNC_TYPE:          {cfgData['Type']} ")
+print(f"MAC-Adress:        {cfgData['MAC']}" )
+print(f"running with configuration:\r\n{cfgData}")
 print("\r\neverything is initialized, let's go ahead now ->\r\n")
 
-os.umount('/')
-os.VfsLfs2.mkfs(bdev)
-os.mount(bdev, '/')
+print("---> Directory:")
+print(os.listdir('/'))
 
-data = dict()
-data["hostname"] = "ich bins"
-data["server"] = "servername or IP"
-data["service"] = "service number"
-data["MeasuringCycle"] = "5"
-data ["TransmitCycle"] = "300"
-data["PageReload"] = "10"
-data["APtimeout"] = "60"
-data["hash"] = ""
-
-with open("myfile.txt", "w") as f:
-    json.dump(data, f)
-    #f.write(str(data))
-
-with open("myfile.txt", "r") as f:
-    edata = json.load(f)
-
-print(edata)
-print(edata["hostname"])
-  
-  
-def do_connect(SSID, Passw):
-    import network
-    wlan = network.WLAN(network.STA_IF)
-    wlan.active(True)
-    if not wlan.isconnected():
-        print(f'\n\r\nconnecting to network {SSID} ', end='')
-        wlan.connect(SSID, Passw)
-        while not wlan.isconnected():
-            p0.value(not p0.value())
-            print(".", end='')
-            time.sleep(0.1)
-    print('\r\nnetwork config:', wlan.ifconfig())
-
-#do_connect("TK800", "Lanecharge")
-do_connect("janzneu", "D1AFFE1234!")
-
+def handle_uptimer(timer):
+    cfgData['uptime'] += 1
     
+myTimers.append('Uptimer', 1000, handle_uptimer)
+
+# TM.downTimers.downCnter["noch mehr"] = 300
+
+cfgData["WiFi"] = 0
+
+def taskexample(timer):
+    print(f"task-ID: {timerexample['id']} - {timerexample['name']} executed")
+    cfgData['WiFi'] = 'SSID-Wert'
+    try:
+        #print(f"sending to http://192.168.2.87:8081:\r\n{cfgData}")
+        #response = urequests.post('http://192.168.2.87:8080', json=cfgData)
+        #print(response.content)
+        cfgData['goodTrans'] += 1
+    except:
+        cfgData['badTrans'] += 1
+        print('habe niemanden erreicht')
+    pass
+
+blink = myTimers.append("Blinker", 500, LED_Timer)
+
+timerexample = myTimers.append("Timer_Example", 10000, taskexample)
+
+#response = urequests.post("http://192.168.2.87:8080", json=cfgData)
+#print(response.content)
+
+#ws.webserv(cfgData)
+#wstimer = TM.freeTimer("WebServer", 100, ws.webserv.do_web)
+#print(f"---> wstimer: {wstimer}")
+#ws.webserv.do_web()
+  
+#print(TM.Timers('Timer_1', 500, LED_Timer))  
+#TM.Timers('Timer_2', 1500, taskexample)  
+#print(TM.Timers.timers)
+
 while True:
+    """
     print(f"elapsed time: {(time.ticks_ms() - start) / 1000}")    
-    p0.value(not p0.value())
-    time.sleep(0.25)
+    if p1.value():
+        print("Button is released.")
+    else:
+        print("Button is pressed.")
+    """
+    print("active downConuters:")
+    #for t in TM.Timers.timers.items():
+    #    print (t)
+    print(TM.Timers.timers)
+    print("")
+    time.sleep(5)
