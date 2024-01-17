@@ -2,7 +2,7 @@ import socket
 from machine import Pin
 
 import config as cfg
-import settings as sett
+import settings as set
 
 class webserv():
     s = None
@@ -26,6 +26,7 @@ class webserv():
                 #if gc.mem_free() < 102000:
                 #  gc.collect()
                 conn, addr = webserv.s.accept()
+                print("iam here")
                 conn.settimeout(3.0)
                 print('Got a connection from %s' % str(addr))
                 request = conn.recv(1024)
@@ -57,7 +58,7 @@ class webserv():
     
     def infoPage(self):
         st = '</h3>'
-        st += sett.Version + '<br><br><br>Type: ' + sett.FNC_TYPE + '<br>Hardw: ' + sett.DEV_TYPE
+        st += set.Version + '<br><br><br>Type: ' + set.FNC_TYPE + '<br>Hardw: ' + set.DEV_TYPE
         st += '<br>Chip-ID: ' + self.cfgData['chipID']
         st += '<br>MAC-Address: ' + self.cfgData['MAC']
         st += '<br>Network:     ' + self.cfgData['SSID']
@@ -67,4 +68,20 @@ class webserv():
         st += '<br>Hash:       ' + hex(self.cfgData['hash'])
         st += '<br>'
         st += 'uptime: ' + str(self.cfgData['uptime'])
+        st = self.newinfoPage()
+        return st
+    
+    def newinfoPage(self):
+        st = ""
+        for sub in set.PageCont:
+            try:
+                print(f"try with: {sub}")
+                if '{cfgData}' in set.PageData[sub]:
+                    st += set.PageData[sub].replace('{cfgData}', str(self.cfgData[sub]))
+                if '{cfgDataHEX}' in set.PageData[sub]:
+                    st += set.PageData[sub].replace('{cfgDataHEX}', hex(self.cfgData[sub]))
+            except Exception as err:
+                print(f"exception with: {sub} - {err}")
+                st += set.PageData[sub]
+        print (st)
         return st
