@@ -38,11 +38,54 @@ cf = cfg.cfg()
 
 myTimers = TM.Timers()
 
+# ### Timer handlers 
 def LED_Timer(timer):
     #print(f"task-ID: {blink['id']} - {blink['name']} executed")
     p0.value(not p0.value())
 
+def taskexample(timer):
+    print(f"task-ID: {timerexample['id']} - {timerexample['name']} executed")
+    cfgData['WiFi'] = 'SSID-Wert'
+    try:
+        #print(f"sending to http://192.168.2.87:8081:\r\n{cfgData}")
+        #response = urequests.post('http://192.168.2.87:8080', json=cfgData)
+        #print(response.content)
+        cfgData['goodTrans'] += 1
+    except:
+        cfgData['badTrans'] += 1
+        print('habe niemanden erreicht')
+    pass
+
+def handle_uptimer(timer):
+    cfgData['uptime'] += 1
+# ### Timer handlers 
+
+cfgData = {}
+
+cfgData['uptime'] = 0
+
+maxtimer = 'maxtimer not defined'
+blink = myTimers.append("Blinker", 500, LED_Timer)
+maxtimer = myTimers.append('maxtimer', 500)
+utimer = myTimers.append('Uptimer', 1000, handle_uptimer)
+#timerexample = myTimers.append("Timer_Example", 10000, taskexample)
+
+print(blink)
+print(maxtimer)
+print(utimer)
+
+while (True):
+    time.sleep(0.5)
+    print(f"downCnt: {maxtimer['downCnt']} - uptime: {cfgData['uptime']}")
+    if (maxtimer['downCnt'] == 0):
+        print('maxtimer wird nicht mehr gebraucht')
+        myTimers.stop(maxtimer)
+        ##maxtimer['downCnt'] = 123
+        ##time.sleep(5)
+        maxtimer = myTimers.append('maxtimer', 500)
+
 cfgData = cf.loadConfig()
+
 if (not cfgData):
     print("!!! P A N I K !!! could not load configuration")
     panik =  myTimers.append("Panik", 25, LED_Timer)
@@ -80,33 +123,9 @@ def handle_uptimer(timer):
     
 myTimers.append('Uptimer', 1000, handle_uptimer)
 
-# TM.downTimers.downCnter["noch mehr"] = 300
-
 cfgData["WiFi"] = 0
 
-def taskexample(timer):
-    print(f"task-ID: {timerexample['id']} - {timerexample['name']} executed")
-    cfgData['WiFi'] = 'SSID-Wert'
-    try:
-        #print(f"sending to http://192.168.2.87:8081:\r\n{cfgData}")
-        #response = urequests.post('http://192.168.2.87:8080', json=cfgData)
-        #print(response.content)
-        cfgData['goodTrans'] += 1
-    except:
-        cfgData['badTrans'] += 1
-        print('habe niemanden erreicht')
-    pass
-
-blink = myTimers.append("Blinker", 500, LED_Timer)
-
-timerexample = myTimers.append("Timer_Example", 10000, taskexample)
-
-#response = urequests.post("http://192.168.2.87:8080", json=cfgData)
-#print(response.content)
-
 #ws.webserv(cfgData)
-#wstimer = TM.freeTimer("WebServer", 100, ws.webserv.do_web)
-#print(f"---> wstimer: {wstimer}")
 #ws.webserv.do_web()
   
 #print(TM.Timers('Timer_1', 500, LED_Timer))  
