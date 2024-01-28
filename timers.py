@@ -51,7 +51,7 @@ class Timers():
     
     def downCnt(self, name):
         while self.is_running:
-            print("waiting in downCnt()")
+            print(f"waiting in downCnt() for timer: <{name}")
             pass
         self.is_running = True
         try:
