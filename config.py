@@ -6,7 +6,7 @@ class cfg():
     confData = dict()
     def __init__(self):
         print('init cfg-class')
-        self.confData = dict()
+        #self.confData = dict()
         
     def eraseConfig():
         print('eraseConfig()')
@@ -26,26 +26,33 @@ class cfg():
             print('try to read config.json ... ')
             with open('config.json', 'r') as f:
                 self.confData = json.load(f)
-                if(self.testHash()):
+                print(self.confData)
+                if(self.Hash_ok()):
                     print('Hash OK')
                 else:
                     print("Hash not ok")
-                    return False
+                    raise
         except Exception as err:
-            print(f"file not found, generating new one: ({err})")
+            print(f"file not found or corrupted, generating new one: ({err})")
             self.SetToDefault()
-            with open('config.json', 'r') as cf:
-                self.confData = json.load(cf)
-            if self.testHash():
+            try:
+                with open('config.json', 'r') as cf:
+                    self.confData = json.load(cf)
+            except:
+                print('can not find config.json')
+                return False, False
+            if not self.Hash_ok():
                 print('can not generate config.json')
-                return False
-        return self.confData
+                return False, False
+            else:  
+                return False, self.confData
+        return True, self.confData
 
     def SetToDefault(self):
         print('SetToDefault()')
-        confData = set.defData
-        confData['Architecture'] = sys.implementation._machine
-        self.saveConfig(confData)
+        self.confData = set.defData
+        self.confData['Architecture'] = sys.implementation._machine
+        self.saveConfig(self.confData)
 
     def calcHash(self):
         print('calcHash()')
@@ -53,11 +60,12 @@ class cfg():
         self.confData.pop('hash', '')
         sorted_string = ''.join(sorted(f"{key}{value}" for key, value in self.confData.items()))
         checksum = sum(ord(char) for char in sorted_string)
-        self.confData['hash'] = checksum
         # Setze den berechneten checksum als Wert für 'checksum' im Dictionary
+        self.confData['hash'] = checksum
 
-    def testHash(self):
-        print('testHash()')
+    def Hash_ok(self):
+        temp = ''
+        print('Hash_ok()')
         currentHash = self.confData.pop('hash', '')
         sorted_string = ''.join(sorted(f"{key}{value}" for key, value in self.confData.items()))
         checksum = sum(ord(char) for char in sorted_string)
