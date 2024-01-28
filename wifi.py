@@ -14,22 +14,22 @@ def connectBlink(timer):
 
 def do_connect(SSID, Passw):
     blink = myTimers.append("WLAN-Blinker", 100, connectBlink)
-    #blink.start()
+    print(blink)
+    #maxtimer = myTimers.append('maxtimer', 3000, 'downtimer')
+    #print(maxtimer)
     wlan = network.WLAN(network.STA_IF)
+    time.sleep(3)
     wlan.active(True)
     if not wlan.isconnected():
         print(f'\n\rconnecting to network {SSID} - {Passw}', end='')
-        myTimers.append('WLAN', 3000, 'downtimer')
-        ##TM.downTimers.downCnter["WLAN"] = 3000
         wlan.connect(SSID, Passw)
         while not wlan.isconnected():
             print(".", end='')
             time.sleep(0.1)
-            if(myTimers.timers['WLAN'] == 0): ## TM.downTimers.downCnter["WLAN"] == 0):
+            if(myTimers.timers['WLAN'] == 0):
                 print(" ")
-                #blink.stop()
+                #myTimers.stop(maxtimer)
                 return None
     print(" ")
-    print(blink)
     myTimers.stop(blink)
     return(wlan)
