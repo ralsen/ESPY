@@ -26,6 +26,15 @@ PageData['divider'] = "<br><br><br>"
 PageData['uptime'] = "<br>uptime: {cfgData}"
 PageData['delivPages'] = "<br>Pages delivered: {cfgData}"
 
+ServerCont = [
+            'hostname',
+            'IP',
+            'name',
+            'SSID',
+            'Hardware',
+            'uptime',
+            'Architecture'
+            ]
 
 PageCont =  [
             'Version',
@@ -64,9 +73,5 @@ defData['hostname'] = 'MyName'
 defData['fixip'] = '1.1.1.1'
 defData['Server'] = 'servername'
 defData['Port'] = 'number'
-defData['uptime'] = 0
-defData['delivPages'] = 0
-defData['goodTrans'] = 0
-defData['badTrans'] = 0
 defData['LED'] = True
 defData['hash'] = '0815'
