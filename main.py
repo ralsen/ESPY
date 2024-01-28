@@ -4,17 +4,14 @@ import time
 
 import time
 import os
-import json
-import config
-import urequests
 
+import urequests
 import wifi as wf
 import webserver as ws
 import settings as set
 import timers as TM
 import config as cfg
-
-
+import util as ut
 
 p0 = Pin(2, Pin.OUT) 
 p1 = Pin(0, Pin.IN)
@@ -27,6 +24,8 @@ print(set.Version)
 print("Key service started!")            
 print("10ms Timer service started!")
 print("1s timer services started!")
+
+sysData = {}
 
 def byte2str (value):
     strval = ''
@@ -45,54 +44,50 @@ def LED_Timer(timer):
 
 def taskexample(timer):
     print(f"task-ID: {timerexample['id']} - {timerexample['name']} executed")
-    cfgData['WiFi'] = 'SSID-Wert'
+    sysData['WiFi'] = "RSSI"
+    srvData = ut.ServerInfo(set.ServerCont, cfgData, sysData)
+    if srvData == False:
+        print("no data available !!!")
+        return
     try:
-        #print(f"sending to http://192.168.2.87:8081:\r\n{cfgData}")
-        #response = urequests.post('http://192.168.2.87:8080', json=cfgData)
-        #print(response.content)
-        cfgData['goodTrans'] += 1
+        print(f"sending to http://192.168.2.87:8080:\r\n{srvData}")
+        print(f"sending to http://192.168.2.87:8080:\r\n{cfgData}")
+        
+        response = urequests.post('http://192.168.2.87:8080', json=cfgData)
+        print(response.content)
+        sysData['goodTrans'] += 1
     except:
-        cfgData['badTrans'] += 1
+        sysData['badTrans'] += 1
         print('habe niemanden erreicht')
     pass
 
 def handle_uptimer(timer):
-    cfgData['uptime'] += 1
+    sysData['uptime'] += 1
 # ### Timer handlers 
 
-cfgData = {}
+loaded_cfgData = cf.loadConfig()
+cfgData = loaded_cfgData[1]
 
-cfgData['uptime'] = 0
-
-maxtimer = 'maxtimer not defined'
-blink = myTimers.append("Blinker", 500, LED_Timer)
-maxtimer = myTimers.append('maxtimer', 500)
-utimer = myTimers.append('Uptimer', 1000, handle_uptimer)
-#timerexample = myTimers.append("Timer_Example", 10000, taskexample)
-
-print(blink)
-print(maxtimer)
-print(utimer)
-
-while (True):
-    time.sleep(0.5)
-    print(f"downCnt: {maxtimer['downCnt']} - uptime: {cfgData['uptime']}")
-    if (maxtimer['downCnt'] == 0):
-        print('maxtimer wird nicht mehr gebraucht')
-        myTimers.stop(maxtimer)
-        ##maxtimer['downCnt'] = 123
-        ##time.sleep(5)
-        maxtimer = myTimers.append('maxtimer', 500)
-
-cfgData = cf.loadConfig()
-
-if (not cfgData):
+print(f"---> {cfgData}")
+if loaded_cfgData[1] == False:
     print("!!! P A N I K !!! could not load configuration")
     panik =  myTimers.append("Panik", 25, LED_Timer)
     while True:
         pass
     
-cfgData['uptime'] = 0
+sysData['uptime'] = 0
+sysData['badTrans'] = 0
+sysData['goodTrans'] = 0
+sysData['RSSI'] = 0
+
+blink = myTimers.append("Blinker", 500, LED_Timer)
+maxtimer = myTimers.append('maxtimer', 2000)
+utimer = myTimers.append('Uptimer', 1000, handle_uptimer)
+timerexample = myTimers.append("Timer_Example", 10000, taskexample)
+
+print(blink)
+print(maxtimer)
+print(utimer)
 
 wifi = wf.do_connect(cfgData["SSID"], cfgData["password"])
 if (wifi == None):
@@ -103,7 +98,8 @@ else:
 cfgData["IP"] = wifi.ifconfig()[0]
 cfgData["Server"] = wifi.ifconfig()[2]
 cfgData["MAC"] = byte2str(wifi.config('mac'))
-cfgData['hostname'] = cfgData['name'] + '_' + cfgData['MAC'].replace(':', '_')
+#cfgData['hostname'] = cfgData['name'] + '_' + cfgData['MAC'].replace(':', '_') # this is the better line
+cfgData['name'] = cfgData['hostname'] + '_' + cfgData['MAC'].replace(':', '_') #for compatibility use this
 cfgData['chipID'] = byte2str(machine.unique_id())
 cf.saveConfig(cfgData)
 
@@ -111,17 +107,14 @@ print(f"\r\n---> Hello from device: {cfgData['hostname']} <---" )
 print(f"Architecture:      {cfgData['Architecture']}")
 print(f"DEV_TYPE:          {cfgData['Hardware']}")
 print(f"FNC_TYPE:          {cfgData['Type']} ")
-print(f"MAC-Adress:        {cfgData['MAC']}" )
+print(f"MAC-Adress:        {cfgData['MAC']}")
+print(f"Network:           {cfgData['SSID']}")
+print(f"IP-Adress:         {cfgData['IP']}")
 print(f"running with configuration:\r\n{cfgData}")
 print("\r\neverything is initialized, let's go ahead now ->\r\n")
 
 print("---> Directory:")
 print(os.listdir('/'))
-
-def handle_uptimer(timer):
-    cfgData['uptime'] += 1
-    
-myTimers.append('Uptimer', 1000, handle_uptimer)
 
 cfgData["WiFi"] = 0
 
@@ -132,6 +125,7 @@ cfgData["WiFi"] = 0
 #TM.Timers('Timer_2', 1500, taskexample)  
 #print(TM.Timers.timers)
 
+loop = 475
 while True:
     """
     print(f"elapsed time: {(time.ticks_ms() - start) / 1000}")    
@@ -140,9 +134,18 @@ while True:
     else:
         print("Button is pressed.")
     """
+    print(f"downCnt: {maxtimer['downCnt']} - uptime: {sysData['uptime']} - loop: {loop}")
+    loop += 5
+    if (maxtimer['downCnt'] == 0):
+        print('maxtimer wird nicht mehr gebraucht')
+        myTimers.stop(maxtimer)
+        maxtimer = myTimers.append('maxtimer', loop)
+    
     print("active downConuters:")
     #for t in TM.Timers.timers.items():
     #    print (t)
     print(TM.Timers.timers)
     print("")
     time.sleep(5)
+    
+myTimers.stop(maxtimer)
