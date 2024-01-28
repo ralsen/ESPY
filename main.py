@@ -51,9 +51,7 @@ def taskexample(timer):
         return
     try:
         print(f"sending to http://192.168.2.87:8080:\r\n{srvData}")
-        print(f"sending to http://192.168.2.87:8080:\r\n{cfgData}")
-        
-        response = urequests.post('http://192.168.2.87:8080', json=cfgData)
+        response = urequests.post('http://192.168.2.87:8080', json=srvData)
         print(response.content)
         sysData['goodTrans'] += 1
     except:
