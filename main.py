@@ -45,7 +45,7 @@ def LED_Timer(timer):
 def taskexample(timer):
     print(f"task-ID: {timerexample['id']} - {timerexample['name']} executed")
     sysData['WiFi'] = "RSSI"
-    srvData = ut.ServerInfo(set.ServerCont, cfgData, sysData)
+    srvData = ut.ServerInfo(set.ServerContent, cfgData, sysData)
     if srvData == False:
         print("no data available !!!")
         return
@@ -139,11 +139,11 @@ while True:
         myTimers.stop(maxtimer)
         maxtimer = myTimers.append('maxtimer', loop)
     
-    print("active downConuters:")
+    #print("active downConuters:")
     #for t in TM.Timers.timers.items():
     #    print (t)
-    print(TM.Timers.timers)
-    print("")
+    #print(TM.Timers.timers)
+    #print("")
     time.sleep(5)
     
 myTimers.stop(maxtimer)

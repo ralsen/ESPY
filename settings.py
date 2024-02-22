@@ -26,15 +26,33 @@ PageData['divider'] = "<br><br><br>"
 PageData['uptime'] = "<br>uptime: {cfgData}"
 PageData['delivPages'] = "<br>Pages delivered: {cfgData}"
 
-ServerCont = [
-            'hostname',
-            'IP',
-            'name',
-            'SSID',
-            'Hardware',
-            'uptime',
-            'Architecture'
-            ]
+ServerContent = [
+                'hostname',
+                'IP',
+                'name',
+                'SSID',
+                'Hardware',
+                'uptime',
+                'Version',
+                'Network',
+                'APName',
+                'MAC',
+                'TransmitCycle',
+                'MeasuringCycle',
+                'Hash',
+                'Size',
+                'PageReload',
+                'Server',
+                'Port',
+                'uptime',
+                'delivPages',
+                'goodTrans',
+                'badTrans',
+                'LED',
+                'WiFi',
+                'Type',
+                'Architecture'
+                ]
 
 PageCont =  [
             'Version',
@@ -66,12 +84,14 @@ defData['Architecture'] = ''
 defData['Network'] = 'WiFi.SSID'
 defData['APName'] = 'ESPY_NET'
 defData['MAC'] = 'xx.xx.xx.xx.xx.xx'
-defData['TransmitCycle'] = '300'
-defData['MeasuringCycle'] = '5'
-defData['PageReload'] = '10'
+defData['TransmitCycle'] = 300
+defData['MeasuringCycle'] = 5
+defData['PageReload'] = 10
+defData['delivPages'] = 0
 defData['hostname'] = 'MyName'
 defData['fixip'] = '1.1.1.1'
 defData['Server'] = 'servername'
 defData['Port'] = 'number'
 defData['LED'] = True
-defData['hash'] = '0815'
+defData['Size'] = 4711
+defData['Hash'] = 815
