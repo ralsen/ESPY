@@ -1,17 +1,18 @@
 from machine import Pin
 import machine
 import time
-
 import time
 import os
-
 import urequests
+import binascii
+
 import wifi as wf
 import webserver as ws
 import settings as set
 import timers as TM
 import config as cfg
 import util as ut
+import DS1820 as DS
 
 p0 = Pin(2, Pin.OUT) 
 p1 = Pin(0, Pin.IN)
@@ -37,12 +38,12 @@ cf = cfg.cfg()
 
 myTimers = TM.Timers()
 
-# ### Timer handlers 
+# ############################# Timer handlers ############################## 
 def LED_Timer(timer):
     #print(f"task-ID: {blink['id']} - {blink['name']} executed")
     p0.value(not p0.value())
 
-def taskexample(timer):
+def handle_taskexample(timer):
     print(f"task-ID: {timerexample['id']} - {timerexample['name']} executed")
     sysData['WiFi'] = "RSSI"
     srvData = ut.ServerInfo(set.ServerContent, cfgData, sysData)
@@ -61,7 +62,10 @@ def taskexample(timer):
 
 def handle_uptimer(timer):
     sysData['uptime'] += 1
-# ### Timer handlers 
+
+def handle_DS1820(timer):
+    print(DS.getDS1820())
+# ############################## Timer handlers ##############################
 
 loaded_cfgData = cf.loadConfig()
 cfgData = loaded_cfgData[1]
@@ -81,7 +85,8 @@ sysData['RSSI'] = 0
 blink = myTimers.append("Blinker", 500, LED_Timer)
 maxtimer = myTimers.append('maxtimer', 2000)
 utimer = myTimers.append('Uptimer', 1000, handle_uptimer)
-timerexample = myTimers.append("Timer_Example", 10000, taskexample)
+DSTimer = myTimers.append('DS1820', 1000, handle_DS1820)
+timerexample = myTimers.append("Timer_Example", 5500, handle_taskexample)
 
 print(blink)
 print(maxtimer)
@@ -95,10 +100,10 @@ else:
 
 cfgData["IP"] = wifi.ifconfig()[0]
 cfgData["Server"] = wifi.ifconfig()[2]
-cfgData["MAC"] = byte2str(wifi.config('mac'))
+cfgData["MAC"] = binascii.hexlify(wifi.config('mac')).decode()
 #cfgData['hostname'] = cfgData['name'] + '_' + cfgData['MAC'].replace(':', '_') # this is the better line
 cfgData['name'] = cfgData['hostname'] + '_' + cfgData['MAC'].replace(':', '_') #for compatibility use this
-cfgData['chipID'] = byte2str(machine.unique_id())
+cfgData["chipID"] = binascii.hexlify(machine.unique_id()).decode()
 cf.saveConfig(cfgData)
 
 print(f"\r\n---> Hello from device: {cfgData['hostname']} <---" )
