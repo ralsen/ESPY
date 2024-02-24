@@ -3,19 +3,21 @@
 import machine, onewire, ds18x20, time
 import binascii
 
-ds_pin = machine.Pin(4)
-ds_sensor = ds18x20.DS18X20(onewire.OneWire(ds_pin))
-
-roms = ds_sensor.scan()
-print('Found DS devices: ', roms)
-
-def getDS1820():
-    ds = {}    
-    ds_sensor.convert_temp()
-    time.sleep_ms(750)
-    for rom in roms:
-        dsadr = binascii.hexlify(rom).decode()
-        ds[dsadr] = ds_sensor.read_temp(rom)
-        print(dsadr)
-        print(ds_sensor.read_temp(rom))
-    return ds
+class DS1820():
+    def __init__(self):    
+        ds_pin = machine.Pin(4)
+        self.ds_sensor = ds18x20.DS18X20(onewire.OneWire(ds_pin))
+        self.romsbyte = self.ds_sensor.scan()
+        self.romstr = {}
+        for rom in self.romsbyte:
+            self.romstr[binascii.hexlify(rom).decode()] = rom
+        self.ds = {}
+        print(f"found {len(self.romstr)} x DS1820")
+        print(f"Found DS1820 devices: {self.romstr}")
+        
+    def read(self):
+        self.ds_sensor.convert_temp()
+        time.sleep_ms(750)
+        for rom in self.romstr.keys():
+            self.ds[rom] = self.ds_sensor.read_temp(self.romstr[rom])
+        return self.ds

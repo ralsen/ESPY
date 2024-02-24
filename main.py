@@ -28,15 +28,11 @@ print("1s timer services started!")
 
 sysData = {}
 
-def byte2str (value):
-    strval = ''
-    for byte in value:
-        strval += '{:02X}'.format(byte) + ":"
-    return strval[:-1]
-
 cf = cfg.cfg()
 
 myTimers = TM.Timers()
+myDS1820 = DS.DS1820()
+print(myDS1820.read())
 
 # ############################# Timer handlers ############################## 
 def LED_Timer(timer):
@@ -64,7 +60,7 @@ def handle_uptimer(timer):
     sysData['uptime'] += 1
 
 def handle_DS1820(timer):
-    print(DS.getDS1820())
+    print(myDS1820.read())
 # ############################## Timer handlers ##############################
 
 loaded_cfgData = cf.loadConfig()
@@ -85,8 +81,8 @@ sysData['RSSI'] = 0
 blink = myTimers.append("Blinker", 500, LED_Timer)
 maxtimer = myTimers.append('maxtimer', 2000)
 utimer = myTimers.append('Uptimer', 1000, handle_uptimer)
-DSTimer = myTimers.append('DS1820', 1000, handle_DS1820)
-timerexample = myTimers.append("Timer_Example", 5500, handle_taskexample)
+DSTimer = myTimers.append('DS1820', 150000, handle_DS1820)
+timerexample = myTimers.append("Timer_Example", 300000, handle_taskexample)
 
 print(blink)
 print(maxtimer)
@@ -137,11 +133,12 @@ while True:
     else:
         print("Button is pressed.")
     """
-    print(f"downCnt: {maxtimer['downCnt']} - uptime: {sysData['uptime']} - loop: {loop}")
+    print(f"downCnt: {maxtimer['downCnt']} - uptime: {sysData['uptime']} - loop: {loop} - uptime: {sysData['uptime']}")
     loop += 5
     if (maxtimer['downCnt'] == 0):
         print('maxtimer wird nicht mehr gebraucht')
         myTimers.stop(maxtimer)
+        #myTimers.stop(blink)
         maxtimer = myTimers.append('maxtimer', loop)
     
     #print("active downConuters:")

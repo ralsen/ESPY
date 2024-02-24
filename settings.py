@@ -1,6 +1,6 @@
 VERNR = "0.0"
-__DATE__ = "12.01.2024"
-__TIME__ = "15:50s"
+__DATE__ = "24.02.2024"
+__TIME__ = "16:58"
 RELEASE = "Debug"
 FNC_TYPE = "DS1820"
 DEV_TYPE = "D1MINI"
