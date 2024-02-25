@@ -1,4 +1,5 @@
 import settings as set
+import urequests
 
 def ServerInfo(contend, data1, data2):
     st = {}
@@ -15,4 +16,19 @@ def ServerInfo(contend, data1, data2):
             return False
     return st
 
+def post(cfgData, sysData):
+    sysData['WiFi'] = "RSSI"
+    srvData = ServerInfo(set.ServerContent, cfgData, sysData)
+    if srvData == False:
+        print("no data available !!!")
+        return False
+    try:
+        print(f"sending to http://192.168.2.87:8080:\r\n{srvData}")
+        response = urequests.post('http://192.168.2.87:8080', json=srvData)
+        print(response.content)
+        return response
+    except:
+        sysData['badTrans'] += 1
+        print('habe niemanden erreicht')
+        return False
     
