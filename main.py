@@ -32,35 +32,26 @@ cf = cfg.cfg()
 
 myTimers = TM.Timers()
 myDS1820 = DS.DS1820()
-print(myDS1820.read())
+temps = myDS1820.read(sysData)
 
 # ############################# Timer handlers ############################## 
 def LED_Timer(timer):
     #print(f"task-ID: {blink['id']} - {blink['name']} executed")
     p0.value(not p0.value())
 
-def handle_taskexample(timer):
-    print(f"task-ID: {timerexample['id']} - {timerexample['name']} executed")
-    sysData['WiFi'] = "RSSI"
-    srvData = ut.ServerInfo(set.ServerContent, cfgData, sysData)
-    if srvData == False:
-        print("no data available !!!")
-        return
-    try:
-        print(f"sending to http://192.168.2.87:8080:\r\n{srvData}")
-        response = urequests.post('http://192.168.2.87:8080', json=srvData)
-        print(response.content)
+def handlePost(timer):
+    print(f"task-ID: {PostTimer['id']} - {PostTimer['name']} executed")
+    if ut.post(cfgData, sysData):
         sysData['goodTrans'] += 1
-    except:
+    else:
         sysData['badTrans'] += 1
-        print('habe niemanden erreicht')
-    pass
-
-def handle_uptimer(timer):
+        
+def handleUptimer(timer):
     sysData['uptime'] += 1
 
-def handle_DS1820(timer):
-    print(myDS1820.read())
+def handleDS1820(timer):
+    temps = myDS1820.read()
+    print(temps)
 # ############################## Timer handlers ##############################
 
 loaded_cfgData = cf.loadConfig()
@@ -80,9 +71,8 @@ sysData['RSSI'] = 0
 
 blink = myTimers.append("Blinker", 500, LED_Timer)
 maxtimer = myTimers.append('maxtimer', 2000)
-utimer = myTimers.append('Uptimer', 1000, handle_uptimer)
-DSTimer = myTimers.append('DS1820', 150000, handle_DS1820)
-timerexample = myTimers.append("Timer_Example", 300000, handle_taskexample)
+utimer = myTimers.append('Uptimer', 1000, handleUptimer)
+DSTimer = myTimers.append('DS1820', 150000, handleDS1820)
 
 print(blink)
 print(maxtimer)
@@ -94,6 +84,7 @@ if (wifi == None):
 else:
     print(f"\r\n{wifi.ifconfig()}")
 
+
 cfgData["IP"] = wifi.ifconfig()[0]
 cfgData["Server"] = wifi.ifconfig()[2]
 cfgData["MAC"] = binascii.hexlify(wifi.config('mac')).decode()
@@ -102,6 +93,7 @@ cfgData['name'] = cfgData['hostname'] + '_' + cfgData['MAC'].replace(':', '_') #
 cfgData["chipID"] = binascii.hexlify(machine.unique_id()).decode()
 cf.saveConfig(cfgData)
 
+cfgData['Type'] += '-' + str(len(temps))
 print(f"\r\n---> Hello from device: {cfgData['hostname']} <---" )
 print(f"Architecture:      {cfgData['Architecture']}")
 print(f"DEV_TYPE:          {cfgData['Hardware']}")
@@ -117,13 +109,19 @@ print(os.listdir('/'))
 
 cfgData["WiFi"] = 0
 
+# first post and then cyclic posting
+if ut.post(cfgData, sysData):
+    sysData['goodTrans'] += 1
+else:
+    sysData['badTrans'] += 1
+PostTimer = myTimers.append("Timer_Example", 3000, handlePost)
+
 #ws.webserv(cfgData)
 #ws.webserv.do_web()
   
 #print(TM.Timers('Timer_1', 500, LED_Timer))  
 #TM.Timers('Timer_2', 1500, taskexample)  
 #print(TM.Timers.timers)
-
 loop = 475
 while True:
     """
