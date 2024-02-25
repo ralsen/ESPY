@@ -51,6 +51,10 @@ ServerContent = [
                 'LED',
                 'WiFi',
                 'Type',
+                'Adress_0',
+                'Value_0',
+                'Adress_1',
+                'Value_1',
                 'Architecture'
                 ]
 
@@ -77,7 +81,7 @@ defData['SSID'] = 'janzneu'
 defData['password'] = 'D1AFFE1234!'
 defData['name'] = 'MyName'
 defData['IP'] = ''
-defData['Type'] = 'DS1820-0'
+defData['Type'] = 'DS1820'
 defData['Version'] = VERNR
 defData['Hardware'] = DEV_TYPE
 defData['Architecture'] = ''
