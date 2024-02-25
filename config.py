@@ -57,17 +57,17 @@ class cfg():
     def calcHash(self):
         print('calcHash()')
         # Entferne den letzten Wert aus dem Dictionary, um die Prüfsumme zu berechnen
-        self.confData.pop('hash', '')
+        self.confData.pop('Hash', '')
         sorted_string = ''.join(sorted(f"{key}{value}" for key, value in self.confData.items()))
         checksum = sum(ord(char) for char in sorted_string)
         # Setze den berechneten checksum als Wert für 'checksum' im Dictionary
-        self.confData['hash'] = checksum
+        self.confData['Hash'] = checksum
 
     def Hash_ok(self):
         temp = ''
         print('Hash_ok()')
-        currentHash = self.confData.pop('hash', '')
+        currentHash = self.confData.pop('Hash', '')
         sorted_string = ''.join(sorted(f"{key}{value}" for key, value in self.confData.items()))
         checksum = sum(ord(char) for char in sorted_string)
-        self.confData['hash'] = currentHash
+        self.confData['Hash'] = currentHash
         return checksum==currentHash    

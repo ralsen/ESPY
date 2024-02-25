@@ -65,7 +65,7 @@ class webserv():
         st += '<br>Devicename:  ' + self.cfgData['hostname']
         st += '<br>AP-Name:     ' + self.cfgData['APName']
         st += '<br>cfg-Size:    ' + '1234567890'
-        st += '<br>Hash:       ' + hex(self.cfgData['hash'])
+        st += '<br>Hash:        ' + hex(self.cfgData['Hash'])
         st += '<br>'
         st += 'uptime: ' + str(self.cfgData['uptime'])
         st = self.newinfoPage()
