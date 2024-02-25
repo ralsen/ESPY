@@ -15,9 +15,13 @@ class DS1820():
         print(f"found {len(self.romstr)} x DS1820")
         print(f"Found DS1820 devices: {self.romstr}")
         
-    def read(self):
+    def read(self, data):
         self.ds_sensor.convert_temp()
         time.sleep_ms(750)
+        i = 0
         for rom in self.romstr.keys():
             self.ds[rom] = self.ds_sensor.read_temp(self.romstr[rom])
+            data['Adress_'+str(i)] = rom
+            data['Value_'+str(i)] = self.ds[rom]
+            i += 1
         return self.ds
