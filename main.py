@@ -50,7 +50,7 @@ def handleUptimer(timer):
     sysData['uptime'] += 1
 
 def handleDS1820(timer):
-    temps = myDS1820.read()
+    temps = myDS1820.read(sysData)
     print(temps)
 # ############################## Timer handlers ##############################
 
@@ -72,7 +72,7 @@ sysData['RSSI'] = 0
 blink = myTimers.append("Blinker", 500, LED_Timer)
 maxtimer = myTimers.append('maxtimer', 2000)
 utimer = myTimers.append('Uptimer', 1000, handleUptimer)
-DSTimer = myTimers.append('DS1820', 150000, handleDS1820)
+DSTimer = myTimers.append('DS1820', 1500, handleDS1820)
 
 print(blink)
 print(maxtimer)
@@ -93,7 +93,6 @@ cfgData['name'] = cfgData['hostname'] + '_' + cfgData['MAC'].replace(':', '_') #
 cfgData["chipID"] = binascii.hexlify(machine.unique_id()).decode()
 cf.saveConfig(cfgData)
 
-cfgData['Type'] += '-' + str(len(temps))
 print(f"\r\n---> Hello from device: {cfgData['hostname']} <---" )
 print(f"Architecture:      {cfgData['Architecture']}")
 print(f"DEV_TYPE:          {cfgData['Hardware']}")
