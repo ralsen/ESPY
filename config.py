@@ -61,13 +61,12 @@ class cfg():
         sorted_string = ''.join(sorted(f"{key}{value}" for key, value in self.confData.items()))
         checksum = sum(ord(char) for char in sorted_string)
         # Setze den berechneten checksum als Wert für 'checksum' im Dictionary
-        self.confData['Hash'] = checksum
+        self.confData['Hash'] = hex(checksum)
 
     def Hash_ok(self):
-        temp = ''
         print('Hash_ok()')
         currentHash = self.confData.pop('Hash', '')
         sorted_string = ''.join(sorted(f"{key}{value}" for key, value in self.confData.items()))
         checksum = sum(ord(char) for char in sorted_string)
         self.confData['Hash'] = currentHash
-        return checksum==currentHash    
+        return hex(checksum)==currentHash    
