@@ -16,8 +16,8 @@ def ServerInfo(contend, data1, data2):
             return False
     return st
 
-def post(cfgData, sysData):
-    sysData['WiFi'] = "RSSI"
+def post(wifi, cfgData, sysData):
+    sysData['RSSI'] = wifi.status('rssi')
     srvData = ServerInfo(set.ServerContent, cfgData, sysData)
     if srvData == False:
         print("no data available !!!")
