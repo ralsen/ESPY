@@ -5,6 +5,19 @@ RELEASE = "Debug"
 FNC_TYPE = "DS1820"
 DEV_TYPE = "D1MINI"
 
+
+DEFAULT_SSID       = "unknown"
+DEFAULT_PASSWORD   = "unknown"
+DEFAULT_HOSTNAME   = "No-Name"
+DEFAULT_APNAME     = "ESPY_NET"
+DEFAULT_MEASCYCLE  = 150        # in sec.
+DEFAULT_PAGERELOAD = 10         # in sec.
+
+if (FNC_TYPE) == 'DS1820':
+  DEFAULT_TRANSCYCLE = 300      # transmit cycle to server in sec.
+else:
+  DEFAULT_TRANSCYCLE = 3600
+
 MyName = "\r\n*************************************************************************************\r\n" \
               "*******************************     E S P N o d e      ******************************\r\n" \
               "*************************************************************************************"
@@ -31,10 +44,10 @@ ServerContent = [
                 'IP',
                 'name',
                 'SSID',
+                'RSSI',
                 'Hardware',
                 'uptime',
                 'Version',
-                'Network',
                 'APName',
                 'MAC',
                 'TransmitCycle',
@@ -49,7 +62,6 @@ ServerContent = [
                 'goodTrans',
                 'badTrans',
                 'LED',
-                'WiFi',
                 'Type',
                 'Adress_0',
                 'Value_0',
@@ -79,20 +91,20 @@ defData = {}
 #    defData['password'] = 'Lanecharge'
 defData['SSID'] = 'janzneu'
 defData['password'] = 'D1AFFE1234!'
-defData['name'] = 'MyName'
+defData['name'] = ''                    # this is the full name "Devicename+MAC"
+defData['hostname'] = DEFAULT_HOSTNAME  # this is the Devicename only, given by user
 defData['IP'] = ''
 defData['Type'] = 'DS1820'
 defData['Version'] = VERNR
 defData['Hardware'] = DEV_TYPE
 defData['Architecture'] = ''
-defData['Network'] = 'WiFi.SSID'
 defData['APName'] = 'ESPY_NET'
-defData['MAC'] = 'xx.xx.xx.xx.xx.xx'
-defData['TransmitCycle'] = 300
-defData['MeasuringCycle'] = 5
-defData['PageReload'] = 10
+defData['MAC'] = ''
+defData['chipID'] = ''
+defData['TransmitCycle'] = DEFAULT_TRANSCYCLE
+defData['MeasuringCycle'] = DEFAULT_MEASCYCLE
+defData['PageReload'] = DEFAULT_PAGERELOAD
 defData['delivPages'] = 0
-defData['hostname'] = 'MyName'
 defData['fixip'] = '1.1.1.1'
 defData['Server'] = 'servername'
 defData['Port'] = 'number'
