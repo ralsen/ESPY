@@ -3,7 +3,6 @@ import machine
 import time
 import time
 import os
-import urequests
 import binascii
 
 import wifi as wf
@@ -12,7 +11,6 @@ import settings as set
 import timers as TM
 import config as cfg
 import util as ut
-import DS1820 as DS
 
 p0 = Pin(2, Pin.OUT) 
 p1 = Pin(0, Pin.IN)
@@ -31,8 +29,6 @@ sysData = {}
 cf = cfg.cfg()
 
 myTimers = TM.Timers()
-myDS1820 = DS.DS1820()
-temps = myDS1820.read(sysData)
 
 # ############################# Timer handlers ############################## 
 def LED_Timer(timer):
@@ -41,7 +37,7 @@ def LED_Timer(timer):
 
 def handlePost(timer):
     print(f"task-ID: {PostTimer['id']} - {PostTimer['name']} executed")
-    if ut.post(cfgData, sysData):
+    if ut.post(wifi, cfgData, sysData):
         sysData['goodTrans'] += 1
     else:
         sysData['badTrans'] += 1
@@ -49,9 +45,6 @@ def handlePost(timer):
 def handleUptimer(timer):
     sysData['uptime'] += 1
 
-def handleDS1820(timer):
-    temps = myDS1820.read(sysData)
-    print(temps)
 # ############################## Timer handlers ##############################
 
 loaded_cfgData = cf.loadConfig()
@@ -72,7 +65,18 @@ sysData['RSSI'] = 0
 blink = myTimers.append("Blinker", 500, LED_Timer)
 maxtimer = myTimers.append('maxtimer', 2000)
 utimer = myTimers.append('Uptimer', 1000, handleUptimer)
-DSTimer = myTimers.append('DS1820', 1500, handleDS1820)
+
+if set.FNC_TYPE == 'DS1820':
+    import DS1820 as DS
+    myDS1820 = DS.DS1820()
+    temps = myDS1820.read(sysData)
+
+    def handleDS1820(timer):
+        temps = myDS1820.read(sysData)
+        print(temps)
+
+    DSTimer = myTimers.append('DS1820', cfgData['MeasuringCycle'] * 1000, handleDS1820)
+
 
 print(blink)
 print(maxtimer)
@@ -106,14 +110,12 @@ print("\r\neverything is initialized, let's go ahead now ->\r\n")
 print("---> Directory:")
 print(os.listdir('/'))
 
-cfgData["WiFi"] = 0
-
 # first post and then cyclic posting
-if ut.post(cfgData, sysData):
+if ut.post(wifi, cfgData, sysData):
     sysData['goodTrans'] += 1
 else:
     sysData['badTrans'] += 1
-PostTimer = myTimers.append("Timer_Example", 3000, handlePost)
+PostTimer = myTimers.append("Timer_Example", cfgData['TransmitCycle'] * 1000, handlePost)
 
 #ws.webserv(cfgData)
 #ws.webserv.do_web()
