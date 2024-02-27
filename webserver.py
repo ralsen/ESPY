@@ -8,9 +8,10 @@ class webserv():
     s = None
     cfgData = None
     import html
-    def __init__(self, data):
+    def __init__(self, cfgData, sysData):
         print('=====> S O C K E T: ')
-        self.cfgData = data
+        self.cfgData = cfgData
+        self.sysData = sysData
         webserv.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         webserv.s.bind(('', 80))
         webserv.s.listen(5)
@@ -55,33 +56,19 @@ class webserv():
         st = st.replace('{confpage}', '')
         st = st.replace('{content}', self.infoPage())
         return st
-    
+        
     def infoPage(self):
         st = '</h3>'
-        st += set.Version + '<br><br><br>Type: ' + set.FNC_TYPE + '<br>Hardw: ' + set.DEV_TYPE
-        st += '<br>Chip-ID: ' + self.cfgData['chipID']
-        st += '<br>MAC-Address: ' + self.cfgData['MAC']
-        st += '<br>Network:     ' + self.cfgData['SSID']
-        st += '<br>Devicename:  ' + self.cfgData['hostname']
-        st += '<br>AP-Name:     ' + self.cfgData['APName']
-        st += '<br>cfg-Size:    ' + '1234567890'
-        st += '<br>Hash:        ' + hex(self.cfgData['Hash'])
-        st += '<br>'
-        st += 'uptime: ' + str(self.cfgData['uptime'])
-        st = self.newinfoPage()
-        return st
-    
-    def newinfoPage(self):
-        st = ""
-        for sub in set.PageCont:
-            try:
-                print(f"try with: {sub}")
-                if '{cfgData}' in set.PageData[sub]:
-                    st += set.PageData[sub].replace('{cfgData}', str(self.cfgData[sub]))
-                if '{cfgDataHEX}' in set.PageData[sub]:
-                    st += set.PageData[sub].replace('{cfgDataHEX}', hex(self.cfgData[sub]))
-            except Exception as err:
-                print(f"exception with: {sub} - {err}")
-                st += set.PageData[sub]
-        print (st)
-        return st
+        st += set.Version
+        for key in set.PageContl:
+            st += key[2]
+            if key[0] == '':
+                continue
+            if key[1] == 'cfgData':
+                data = str(self.cfgData[key[0]])
+            elif key[1] == 'sysData':
+                data = str(self.sysData[key[0]])
+            else:   
+                data = f"no data found in {key[1]} key: {key[0]}"
+            st += data
+        return st    
