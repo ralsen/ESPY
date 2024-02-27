@@ -1,17 +1,18 @@
-VERNR = "0.0"
-__DATE__ = "24.02.2024"
-__TIME__ = "16:58"
+VERNR = "0.01"
+__DATE__ = "27.02.2024"
+__TIME__ = "18:15"
 RELEASE = "Debug"
 FNC_TYPE = "DS1820"
 DEV_TYPE = "D1MINI"
 
 
-DEFAULT_SSID       = "unknown"
-DEFAULT_PASSWORD   = "unknown"
-DEFAULT_HOSTNAME   = "No-Name"
-DEFAULT_APNAME     = "ESPY_NET"
-DEFAULT_MEASCYCLE  = 150        # in sec.
-DEFAULT_PAGERELOAD = 10         # in sec.
+DEFAULT_SSID        = "unknown"
+DEFAULT_PASSWORD    = "unknown"
+DEFAULT_HOSTNAME    = "No-Name"
+DEFAULT_APNAME      = "ESPY_NET"
+DEFAULT_PORT        = '8080'
+DEFAULT_MEASCYCLE   = 150        # in sec.
+DEFAULT_PAGERELOAD  = 10         # in sec.
 
 if (FNC_TYPE) == 'DS1820':
   DEFAULT_TRANSCYCLE = 300      # transmit cycle to server in sec.
@@ -22,22 +23,6 @@ MyName = "\r\n******************************************************************
               "*******************************     E S P N o d e      ******************************\r\n" \
               "*************************************************************************************"
 Version = f"\r\n-----> V {VERNR} vom {__DATE__} {__TIME__} {RELEASE} <-----\r\n"
-
-PageData =  {}
-PageData['Version'] = f"</h3>{Version}<br><br><br>Type: {FNC_TYPE}<br>Hardw: {DEV_TYPE}"
-PageData['Hardware'] = f"<br>Hardw: {DEV_TYPE}"
-PageData['MAC'] = "<br>MAC-Address: {cfgData}"
-PageData['Network'] = "<br>Network: {cfgData}"
-PageData['IP'] = "<br>Network-IP: {cfgData}"
-PageData['TransmitCycle'] = "<br>Transmit Cycle: {cfgData}"
-PageData['chipID'] = "<br>Chip-ID: {cfgData}"
-PageData['Architecture'] = "<br>Architecture: {cfgData}"
-PageData['name'] = "<br>Devicename: {cfgData}"
-PageData['APName'] = "<br>AP-Name: {cfgData}"
-PageData['Hash'] = "<br>Hash: {cfgDataHEX}"
-PageData['divider'] = "<br><br><br>"
-PageData['uptime'] = "<br>uptime: {cfgData}"
-PageData['delivPages'] = "<br>Pages delivered: {cfgData}"
 
 ServerContent = [
                 'hostname',
@@ -70,22 +55,30 @@ ServerContent = [
                 'Architecture'
                 ]
 
-PageCont =  [
-            'Version',
-            'chipID',
-            'MAC',
-            'Architecture',
-            'Network',
-            'IP',
-            'name',
-            'APName',
-            'hash',
-            'divider',
-            'TransmitCycle',
-            'uptime',
-            'delivPages'
+PageContl =  [
+              ['', '',                      '<br><br>'],
+              ['Version', 'cfgData',        '<br>Version: V'],
+              ['Type', 'cfgData',           '<br>Type: '],
+              ['Hardware', 'cfgData',       '<br>Hardw: '],
+              ['Architecture', 'cfgData',   '<br>Architecture: '],
+              ['chipID', 'cfgData',         '<br>chipID: '], 
+              ['MAC', 'cfgData',            '<br>MAC-Address: '],
+              ['SSID', 'cfgData',           '<br>Network: '],
+              ['IP', 'cfgData',             '<br>Network-IP: '],
+              ['name', 'cfgData',           '<br>Name: '],
+              ['APName', 'cfgData',         '<br>AP-Name: '],
+              ['Size', 'cfgData',           '<br>cfg-Size: '],
+              ['Hash', 'cfgData',           '<br>Hash: '],
+              ['', '',                      '<br><br>Display: False<br>'],
+              ['uptime', 'sysData',         '<br>uptime: '],
+              ['MeasuringCycle', 'cfgData', '<br>Measuring cycle: '],
+              ['', '',                      '(remaining: 123)'],
+              ['TransmitCycle', 'cfgData',  '<br>Transmit cycle: '],
+              ['', '',                      '(remaining: 456)'],
+              ['', '',                      '<br><br>'],
+              ['RSSI', 'sysData',           '<br>RSSI: '],
+              ['delivPages', 'cfgData',     '<br>Pages delivered: ']
             ]
-
 defData = {}
 #    defData['SSID'] = 'TK800'
 #    defData['password'] = 'Lanecharge'
@@ -107,7 +100,7 @@ defData['PageReload'] = DEFAULT_PAGERELOAD
 defData['delivPages'] = 0
 defData['fixip'] = '1.1.1.1'
 defData['Server'] = 'servername'
-defData['Port'] = 'number'
+defData['Port'] = DEFAULT_PORT
 defData['LED'] = True
 defData['Size'] = 4711
 defData['Hash'] = 815
