@@ -62,6 +62,7 @@ sysData['badTrans'] = 0
 sysData['goodTrans'] = 0
 sysData['RSSI'] = 0
 
+    
 blink = myTimers.append("Blinker", 500, LED_Timer)
 maxtimer = myTimers.append('maxtimer', 2000)
 utimer = myTimers.append('Uptimer', 1000, handleUptimer)
@@ -117,8 +118,8 @@ else:
     sysData['badTrans'] += 1
 PostTimer = myTimers.append("Timer_Example", cfgData['TransmitCycle'] * 1000, handlePost)
 
-#ws.webserv(cfgData)
-#ws.webserv.do_web()
+ws.webserv(cfgData, sysData)
+ws.webserv.do_web()
   
 #print(TM.Timers('Timer_1', 500, LED_Timer))  
 #TM.Timers('Timer_2', 1500, taskexample)  
