@@ -57,6 +57,7 @@ class cfg():
     def calcHash(self):
         print('calcHash()')
         # Entferne den letzten Wert aus dem Dictionary, um die Prüfsumme zu berechnen
+        self.confData['Size'] = hex(len(self.confData))
         self.confData.pop('Hash', '')
         sorted_string = ''.join(sorted(f"{key}{value}" for key, value in self.confData.items()))
         checksum = sum(ord(char) for char in sorted_string)
