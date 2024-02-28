@@ -1,12 +1,11 @@
 import machine
-
+import time
 class Timers():
     timers = {}
     id = 0
     is_running = False
     def __init__(self):
         print(f"Timer class initialized.")
-        timers = {}   
         self.is_running = False
         
     def append(self, name, period, callback=None):
@@ -28,7 +27,8 @@ class Timers():
         else:
             self.timers[name]['callback'] = callback
             self.timers[name]['period'] = period
-            self.timers[name]['downCnt'] = -1
+            self.timers[name]['start'] = time.ticks_ms() + period
+            
         self.timers[name]['instance'].init(
             period=period, 
             mode=machine.Timer.PERIODIC, 
@@ -60,4 +60,7 @@ class Timers():
         except Exception as e:
             print(f"Error in downCnt: {e}")
         finally:
-            self.is_running = False        
+            self.is_running = False      
+            
+    def remain(self, timer):
+        return int((timer['start'] - time.ticks_ms()) / 1000)  

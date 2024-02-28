@@ -60,7 +60,7 @@ class webserv():
     def infoPage(self):
         st = '</h3>'
         st += set.Version
-        for key in set.PageContl:
+        for key in set.PageContent:
             st += key[2]
             if key[0] == '':
                 continue

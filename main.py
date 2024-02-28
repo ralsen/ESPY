@@ -1,7 +1,6 @@
 from machine import Pin
 import machine
 import time
-import time
 import os
 import binascii
 
@@ -36,6 +35,7 @@ def LED_Timer(timer):
     p0.value(not p0.value())
 
 def handlePost(timer):
+    PostTimer['start'] = time.ticks_ms() + cfgData['TransmitCycle'] * 1000
     print(f"task-ID: {PostTimer['id']} - {PostTimer['name']} executed")
     if ut.post(wifi, cfgData, sysData):
         sysData['goodTrans'] += 1
@@ -44,7 +44,7 @@ def handlePost(timer):
         
 def handleUptimer(timer):
     sysData['uptime'] += 1
-
+    
 # ############################## Timer handlers ##############################
 
 loaded_cfgData = cf.loadConfig()
@@ -73,6 +73,7 @@ if set.FNC_TYPE == 'DS1820':
     temps = myDS1820.read(sysData)
 
     def handleDS1820(timer):
+        DSTimer['start'] = time.ticks_ms() + cfgData['MeasuringCycle'] * 1000
         temps = myDS1820.read(sysData)
         print(temps)
 
@@ -116,7 +117,20 @@ if ut.post(wifi, cfgData, sysData):
     sysData['goodTrans'] += 1
 else:
     sysData['badTrans'] += 1
-PostTimer = myTimers.append("Timer_Example", cfgData['TransmitCycle'] * 1000, handlePost)
+PostTimer = myTimers.append("PostTimer", cfgData['TransmitCycle'] * 1000, handlePost)
+
+Remainers = [
+              PostTimer,
+              DSTimer
+            ]
+
+def handleRemainers(timer):
+    for val in Remainers:
+        sysData[val['name']+'_rem'] = myTimers.remain(val)
+        
+for val in Remainers:
+    sysData[val['name']+'_rem'] = 0
+remainers = myTimers.append('RemainTimer', 1000, handleRemainers)
 
 ws.webserv(cfgData, sysData)
 ws.webserv.do_web()
@@ -133,14 +147,15 @@ while True:
     else:
         print("Button is pressed.")
     """
-    print(f"downCnt: {maxtimer['downCnt']} - uptime: {sysData['uptime']} - loop: {loop} - uptime: {sysData['uptime']}")
+    print(sysData)
+    print(f"---> {sysData['PostTimer_rem']} - {sysData['DS1820_rem']}")
+    print(f"downCnt: {maxtimer['downCnt']} - uptime: {sysData['uptime']} - loop: {loop}")
     loop += 5
     if (maxtimer['downCnt'] == 0):
         print('maxtimer wird nicht mehr gebraucht')
         myTimers.stop(maxtimer)
         #myTimers.stop(blink)
         maxtimer = myTimers.append('maxtimer', loop)
-    
     #print("active downConuters:")
     #for t in TM.Timers.timers.items():
     #    print (t)

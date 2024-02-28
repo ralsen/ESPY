@@ -55,30 +55,33 @@ ServerContent = [
                 'Architecture'
                 ]
 
-PageContl =  [
-              ['', '',                      '<br><br>'],
-              ['Version', 'cfgData',        '<br>Version: V'],
-              ['Type', 'cfgData',           '<br>Type: '],
-              ['Hardware', 'cfgData',       '<br>Hardw: '],
-              ['Architecture', 'cfgData',   '<br>Architecture: '],
-              ['chipID', 'cfgData',         '<br>chipID: '], 
-              ['MAC', 'cfgData',            '<br>MAC-Address: '],
-              ['SSID', 'cfgData',           '<br>Network: '],
-              ['IP', 'cfgData',             '<br>Network-IP: '],
-              ['name', 'cfgData',           '<br>Name: '],
-              ['APName', 'cfgData',         '<br>AP-Name: '],
-              ['Size', 'cfgData',           '<br>cfg-Size: '],
-              ['Hash', 'cfgData',           '<br>Hash: '],
-              ['', '',                      '<br><br>Display: False<br>'],
-              ['uptime', 'sysData',         '<br>uptime: '],
-              ['MeasuringCycle', 'cfgData', '<br>Measuring cycle: '],
-              ['', '',                      '(remaining: 123)'],
-              ['TransmitCycle', 'cfgData',  '<br>Transmit cycle: '],
-              ['', '',                      '(remaining: 456)'],
-              ['', '',                      '<br><br>'],
-              ['RSSI', 'sysData',           '<br>RSSI: '],
-              ['delivPages', 'cfgData',     '<br>Pages delivered: ']
-            ]
+PageContent =  [
+                ['', '',                      '<br><br>'],
+                [ 'Version', 'cfgData',        '<br>Version: V'],
+                ['Type', 'cfgData',           '<br>Type: '],
+                ['Hardware', 'cfgData',       '<br>Hardw: '],
+                ['Architecture', 'cfgData',   '<br>Architecture: '],
+                ['chipID', 'cfgData',         '<br>chipID: '], 
+                ['MAC', 'cfgData',            '<br>MAC-Address: '],
+                ['SSID', 'cfgData',           '<br>Network: '],
+                ['IP', 'cfgData',             '<br>Network-IP: '],
+                ['name', 'cfgData',           '<br>Name: '],
+                ['APName', 'cfgData',         '<br>AP-Name: '],
+                ['Size', 'cfgData',           '<br>cfg-Size: '],
+                ['Hash', 'cfgData',           '<br>Hash: '],
+                ['', '',                      '<br><br>Display: False<br>'],
+                ['uptime', 'sysData',         '<br>uptime: '],
+                ['MeasuringCycle', 'cfgData', '<br>Measuring cycle: '],
+                ['DS1820_rem', 'sysData',     ' (remaining: '],
+                ['', '',                      ')'],
+                ['TransmitCycle', 'cfgData',  '<br>Transmit cycle: '],
+                ['PostTimer_rem', 'sysData',  ' (remaining: '],
+                ['', '',                      ')'],
+                ['', '',                      '<br><br>'],
+                ['RSSI', 'sysData',           '<br>RSSI: '],
+                ['delivPages', 'cfgData',     '<br>Pages delivered: ']
+              ]
+
 defData = {}
 #    defData['SSID'] = 'TK800'
 #    defData['password'] = 'Lanecharge'
