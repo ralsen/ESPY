@@ -132,14 +132,15 @@ for val in Remainers:
     sysData[val['name']+'_rem'] = 0
 remainers = myTimers.append('RemainTimer', 1000, handleRemainers)
 
-ws.webserv(cfgData, sysData)
-ws.webserv.do_web()
+
   
 #print(TM.Timers('Timer_1', 500, LED_Timer))  
 #TM.Timers('Timer_2', 1500, taskexample)  
 #print(TM.Timers.timers)
-loop = 475
-while True:
+
+sysData['loop'] = 475
+def handleMain(timer):
+    global maxtimer
     """
     print(f"elapsed time: {(time.ticks_ms() - start) / 1000}")    
     if p1.value():
@@ -147,20 +148,22 @@ while True:
     else:
         print("Button is pressed.")
     """
-    print(sysData)
-    print(f"---> {sysData['PostTimer_rem']} - {sysData['DS1820_rem']}")
-    print(f"downCnt: {maxtimer['downCnt']} - uptime: {sysData['uptime']} - loop: {loop}")
-    loop += 5
+    print(f"---> TransmitRemain: {sysData['PostTimer_rem']} - MeasuringRemain: {sysData['DS1820_rem']}")
+    print(f"downCnt: {maxtimer['downCnt']} - uptime: {sysData['uptime']} - loop: {sysData['loop']}")
+    sysData['loop'] += 5
     if (maxtimer['downCnt'] == 0):
         print('maxtimer wird nicht mehr gebraucht')
         myTimers.stop(maxtimer)
         #myTimers.stop(blink)
-        maxtimer = myTimers.append('maxtimer', loop)
+        maxtimer = myTimers.append('maxtimer', sysData['loop'])
     #print("active downConuters:")
     #for t in TM.Timers.timers.items():
     #    print (t)
     #print(TM.Timers.timers)
     #print("")
-    time.sleep(5)
-    
-myTimers.stop(maxtimer)
+    #time.sleep(5)
+        
+    #myTimers.stop(maxtimer)
+MainTimer = myTimers.append("MainTimer", 5000, handleMain)
+ws.webserv(cfgData, sysData)
+ws.webserv.do_web()
