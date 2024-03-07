@@ -1,0 +1,20 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"name": "serial://dev/tty.usbserial-AL01GWLZ",
+			"uri": "serial:///dev/tty.usbserial-al01gwlz/"
+		}
+	],
+	"settings": {
+		"cSpell.words": [
+			"ds_sensor",
+			"dsadr",
+			"fixip",
+			"hexlify",
+			"romstr"
+		]
+	}
+}
