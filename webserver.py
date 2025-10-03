@@ -17,7 +17,7 @@ class webserv():
         webserv.s.listen(5)
         print(webserv.s)
         print("****************************************************************************")
-        webserv.do_web(self)
+        #webserv.do_web(self)
     
     def do_web(self):
         print("###############################################################################")
@@ -29,13 +29,12 @@ class webserv():
                 conn, addr = webserv.s.accept()
                 print("iam here")
                 conn.settimeout(3.0)
-                print('Got a connection from %s' % str(addr))
-                request = conn.recv(1024)
+                print(f'Got a connection from {str(addr)}')
                 conn.settimeout(None)
                 request = str(request)
-                print('Content = %s' % request)
+                print(f'Content = {request}')
                 request = request[:request.find("HTTP")]
-                print('Cutted: %s' % request)
+                print(f'cutted: {request}')
                 print(f"######### {request.find('/info')}")
                 print(f"######### {request.find('/config')}")
                 response = webserv.web_page(self)

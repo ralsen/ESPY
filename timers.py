@@ -5,13 +5,13 @@ class Timers():
     id = 0
     is_running = False
     def __init__(self):
-        print(f"Timer class initialized.")
+        print("Timer class initialized.")
         self.is_running = False
         
     def append(self, name, period, callback=None):
         while self.is_running:
             print("waiting in append()")
-            pass
+
         self.is_running = True
         print(f"Timer <{name}> initialized with ID = {self.id} ...")
         self.timers[name] = {
@@ -20,7 +20,7 @@ class Timers():
             #'instance': machine.Timer(self.id),
             'name': name
         }
-        if callback == None:
+        if callback is None:
             print ('downcounter: ')
             self.timers[name]['callback'] = lambda x: self.downCnt(name)
             self.timers[name]['downCnt'] = period
@@ -42,18 +42,26 @@ class Timers():
     def stop(self, timer):  
         while self.is_running:
             print("waiting in stop()")
-            pass
         self.is_running = True
         print(f"stopping timer <{timer['name']}>")
         timer['instance'].deinit()
         ret = self.timers.pop(timer['name'], None)
         self.is_running = False
         return ret
-    
+    def stopall(self):
+        while self.is_running:
+            print("waiting in stopall()")
+        self.is_running = True
+        print("stopping all timers")
+        for name, timer in list(self.timers.items()):
+            print(f"stopping timer <{name}>")
+            timer['instance'].deinit()
+            self.timers.pop(name, None)
+        self.is_running = False
+        
     def downCnt(self, name):
         while self.is_running:
             print(f"waiting in downCnt() for timer: <{name}")
-            pass
         self.is_running = True
         try:
             if self.timers.get(name) and self.timers[name].get('downCnt'):

@@ -17,7 +17,7 @@ DEFAULT_PAGERELOAD  = 10         # in sec.
 if (FNC_TYPE) == 'DS1820':
   DEFAULT_TRANSCYCLE = 300      # transmit cycle to server in sec.
 else:
-  DEFAULT_TRANSCYCLE = 3600
+  DEFAULT_TRANSCYCLE = 5
 
 MyName = "\r\n*************************************************************************************\r\n" \
               "*******************************     E S P N o d e      ******************************\r\n" \
@@ -102,7 +102,7 @@ defData['MeasuringCycle'] = DEFAULT_MEASCYCLE
 defData['PageReload'] = DEFAULT_PAGERELOAD
 defData['delivPages'] = 0
 defData['fixip'] = '1.1.1.1'
-defData['Server'] = 'servername'
+defData['Server'] = '192.168.2.87'
 defData['Port'] = DEFAULT_PORT
 defData['LED'] = True
 defData['Size'] = 4711

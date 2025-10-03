@@ -61,7 +61,6 @@ sysData['uptime'] = 0
 sysData['badTrans'] = 0
 sysData['goodTrans'] = 0
 sysData['RSSI'] = 0
-
     
 blink = myTimers.append("Blinker", 500, LED_Timer)
 maxtimer = myTimers.append('maxtimer', 2000)
@@ -73,6 +72,7 @@ if set.FNC_TYPE == 'DS1820':
     temps = myDS1820.read(sysData)
 
     def handleDS1820(timer):
+        print(f"task-ID: {DSTimer['id']} - {DSTimer['name']} executed")
         DSTimer['start'] = time.ticks_ms() + cfgData['MeasuringCycle'] * 1000
         temps = myDS1820.read(sysData)
         print(temps)
@@ -126,14 +126,17 @@ Remainers = [
 
 def handleRemainers(timer):
     for val in Remainers:
+        print(f"handleRemainers for {val['name']}: {myTimers.remain(val)}")
         sysData[val['name']+'_rem'] = myTimers.remain(val)
         
 for val in Remainers:
     sysData[val['name']+'_rem'] = 0
-remainers = myTimers.append('RemainTimer', 1000, handleRemainers)
+    print(f"Remain for {val['name']}: {sysData[val['name']+'_rem']}")
+#remainers = myTimers.append('RemainTimer', 1000, handleRemainers)
 
+print("!!!let's wait 5 seconds !!")
+time.sleep(5000)
 
-  
 #print(TM.Timers('Timer_1', 500, LED_Timer))  
 #TM.Timers('Timer_2', 1500, taskexample)  
 #print(TM.Timers.timers)
@@ -149,10 +152,10 @@ def handleMain(timer):
     pwm.freq(1000)
 
     # Duty Cycle setzen (0 - 65535)
-    for duty in range(0, 128, 2):
+    for duty in range(0, 128, 4):
         pwm.duty_u16(duty)
-        print(f"Duty Cycle: {duty}")
-        time.sleep(0.1)
+        #print(f"Duty Cycle: {duty}")
+        time.sleep(0.05)
         
     print(f"elapsed time: {(time.ticks_ms() - start) / 1000}")    
     if p1.value():
@@ -176,6 +179,15 @@ def handleMain(timer):
     #time.sleep(5)
         
     #myTimers.stop(maxtimer)
+    
 MainTimer = myTimers.append("MainTimer", 500, handleMain)
-ws.webserv(cfgData, sysData)
-ws.webserv.do_web()
+#web = ws.webserv(cfgData, sysData)
+#webTimer = myTimers.append("WebTimer", 100, web.do_web())
+
+try:
+    while True:
+        print("main loop")
+        time.sleep(1)
+except KeyboardInterrupt:
+    print("CTRL+C pressed – terminate Threads…")
+    myTimers.stopall()

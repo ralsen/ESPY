@@ -4,6 +4,7 @@ import urequests
 def ServerInfo(contend, data1, data2):
     st = {}
     for element in contend:
+        print(f"Element: {element}")
         try:
             if element in data1:
                 st[element] = str(data1[element])
@@ -18,6 +19,7 @@ def ServerInfo(contend, data1, data2):
 
 def post(wifi, cfgData, sysData):
     sysData['RSSI'] = wifi.status('rssi')
+    print(f"cfgData: {cfgData} ###---### sysData: {sysData}")
     srvData = ServerInfo(set.ServerContent, cfgData, sysData)
     if srvData == False:
         print("no data available !!!")
