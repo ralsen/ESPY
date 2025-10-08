@@ -13,7 +13,7 @@ class Timers():
             print("waiting in append()")
 
         self.is_running = True
-        print(f"Timer <{name}> initialized with ID = {self.id} ...")
+        print(f"Timer <{name}> (ID = {self.id}) initialized with period {period}.")
         self.timers[name] = {
             'id': self.id,
             'instance': machine.Timer(-1),

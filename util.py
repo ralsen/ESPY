@@ -3,8 +3,8 @@ import urequests
 
 def ServerInfo(contend, data1, data2):
     st = {}
+    return data1
     for element in contend:
-        print(f"Element: {element}")
         try:
             if element in data1:
                 st[element] = str(data1[element])
@@ -29,8 +29,8 @@ def post(wifi, cfgData, sysData):
         response = urequests.post('http://192.168.2.87:8080', json=srvData)
         print(response.content)
         return response
-    except:
+    except Exception as err:
         sysData['badTrans'] += 1
-        print('habe niemanden erreicht')
+        print(f'habe niemanden erreicht: {err}')
         return False
     
