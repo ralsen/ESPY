@@ -37,8 +37,9 @@ class Logger:
             filename = frame.f_code.co_filename.split("/")[-1]
             lineno = frame.f_lineno
             return filename, lineno
-        except:
-            return "<?>", 0
+        except Exception as e:
+            #print (f"Fehler in _caller(): {e}")
+            return "-", 0
 
     def _write(self, line):
         print(line)  # immer Konsole
@@ -51,8 +52,8 @@ class Logger:
 
     def log(self, level, msg):
         if self.LOG_LEVELS[level] >= self.current_level:
-            filename, lineno = self._caller()
-            line = f"{self._now()} :: {level:5s} :: [{self.name:10s}] [{filename}:{lineno:3d}] :: {msg}"
+            #filename, lineno = self._caller()
+            line = f"{self._now()} :: {level:5s} :: [{self.name:10s}] :: {msg}"
             self._write(line)
             gc.collect()
 

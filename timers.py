@@ -1,19 +1,22 @@
 import machine
 import time
+
+from logger import Logger
+#log = Logger.getLogger(__name__, level="INFO", logfile="/log.txt")
+log = Logger.getLogger(__name__)
 class Timers():
     timers = {}
     id = 0
     is_running = False
     def __init__(self):
-        print("Timer class initialized.")
         self.is_running = False
-        
+        log.info("Timers class initialized")        
     def append(self, name, period, callback=None):
         while self.is_running:
-            print("waiting in append()")
+            log.info("waiting in append()")
 
         self.is_running = True
-        print(f"Timer <{name}> (ID = {self.id}) initialized with period {period}.")
+        log.info(f"Timer <{name}> (ID = {self.id}) initialized with period {period}.")
         self.timers[name] = {
             'id': self.id,
             'instance': machine.Timer(-1),
@@ -21,7 +24,7 @@ class Timers():
             'name': name
         }
         if callback is None:
-            print ('downcounter: ')
+            log.info ('downcounter: ')
             self.timers[name]['callback'] = lambda x: self.downCnt(name)
             self.timers[name]['downCnt'] = period
             period = 10
@@ -41,33 +44,33 @@ class Timers():
        
     def stop(self, timer):  
         while self.is_running:
-            print("waiting in stop()")
+            log.info("waiting in stop()")
         self.is_running = True
-        print(f"stopping timer <{timer['name']}>")
+        log.info(f"stopping timer <{timer['name']}>")
         timer['instance'].deinit()
         ret = self.timers.pop(timer['name'], None)
         self.is_running = False
         return ret
     def stopall(self):
         while self.is_running:
-            print("waiting in stopall()")
+            log.info("waiting in stopall()")
         self.is_running = True
-        print("stopping all timers")
+        log.info("stopping all timers")
         for name, timer in list(self.timers.items()):
-            print(f"stopping timer <{name}>")
+            log.info(f"stopping timer <{name}>")
             timer['instance'].deinit()
             self.timers.pop(name, None)
         self.is_running = False
         
     def downCnt(self, name):
         while self.is_running:
-            print(f"waiting in downCnt() for timer: <{name}")
+            log.info(f"waiting in downCnt() for timer: <{name}")
         self.is_running = True
         try:
             if self.timers.get(name) and self.timers[name].get('downCnt'):
                 self.timers[name]['downCnt'] -= 1
         except Exception as e:
-            print(f"Error in downCnt: {e}")
+            log.info(f"Error in downCnt: {e}")
         finally:
             self.is_running = False      
             

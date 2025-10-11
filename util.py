@@ -1,6 +1,9 @@
 import settings as set
 import urequests
 
+from logger import Logger
+log = Logger.getLogger(__name__, level="DEBUG", logfile="/log.txt")
+
 def ServerInfo(contend, data1, data2):
     st = {}
     return data1
@@ -13,24 +16,24 @@ def ServerInfo(contend, data1, data2):
             else:
                 raise Exception(f"Element '{element}' not found in both data1 and data2")
         except Exception as err:
-            print(f"Exception with: {element} - {err}")
+            log.info(f"Exception with: {element} - {err}")
             return False
     return st
 
 def post(wifi, cfgData, sysData):
     sysData['RSSI'] = wifi.status('rssi')
-    print(f"cfgData: {cfgData} ###---### sysData: {sysData}")
+    log.info(f"cfgData: {cfgData} ###---### sysData: {sysData}")
     srvData = ServerInfo(set.ServerContent, cfgData, sysData)
     if srvData == False:
-        print("no data available !!!")
+        log.info("no data available !!!")
         return False
     try:
-        print(f"sending to http://192.168.2.87:8080:\r\n{srvData}")
+        log.info(f"sending to http://192.168.2.87:8080:\r\n{srvData}")
         response = urequests.post('http://192.168.2.87:8080', json=srvData)
-        print(response.content)
+        log.info(response.content)
         return response
     except Exception as err:
         sysData['badTrans'] += 1
-        print(f'habe niemanden erreicht: {err}')
+        log.info(f'habe niemanden erreicht: {err}')
         return False
     

@@ -3,6 +3,10 @@
 import machine, onewire, ds18x20, time
 import binascii
 
+from logger import Logger
+#log = Logger.getLogger(__name__, level="DEBUG", logfile="/log.txt")
+log = Logger.getLogger(__name__)
+
 class DS1820():
     def __init__(self):    
         pass
@@ -13,8 +17,8 @@ class DS1820():
         for rom in self.romsbyte:
             self.romstr[binascii.hexlify(rom).decode()] = rom
         self.ds = {}
-        print(f"found {len(self.romstr)} x DS1820")
-        print(f"Found DS1820 devices: {self.romstr}")
+        log.info(f"found {len(self.romstr)} x DS1820")
+        log.info(f"Found DS1820 devices: {self.romstr}")
         
     def read(self, data):
         pass

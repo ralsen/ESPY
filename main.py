@@ -3,6 +3,7 @@ import machine
 import time
 import os
 import binascii
+import json
 
 import wifi as WF
 import webserver as ws
@@ -11,17 +12,20 @@ import timers as TM
 import config as cfg
 import util as ut
 
+from logger import Logger
+log = Logger.getLogger(__name__, level="INFO", logfile="/log.txt")
+
 p0 = Pin('LED', Pin.OUT) 
 p1 = Pin(0, Pin.IN)
 
 start = time.ticks_ms()
 
-print(set.MyName)
-print(set.Version)
+log.info(set.MyName)
+log.info(set.Version)
 
-print("Key service started!")            
-print("10ms Timer service started!")
-print("1s timer services started!")
+log.info("Key service started!")            
+log.info("10ms Timer service started!")
+log.info("1s timer services started!")
 
 sysData = {}
 
@@ -34,7 +38,7 @@ def LED_Timer(timer):
 
 def handlePost(timer):
     PostTimer['start'] = time.ticks_ms() + cfgData['TransmitCycle'] * 1000
-    print(f"task-ID: {PostTimer['id']} - {PostTimer['name']} executed")
+    log.info(f"task-ID: {PostTimer['id']} - {PostTimer['name']} executed")
     if ut.post(wifi, cfgData, sysData):
         sysData['goodTrans'] += 1
     else:
@@ -58,20 +62,20 @@ def handleMain(timer):
         #print(f"Duty Cycle: {duty}")
         time.sleep(0.05)
         
-    print(f"elapsed time: {(time.ticks_ms() - start) / 1000}")    
+    log.info(f"elapsed time: {(time.ticks_ms() - start) / 1000}")    
     if p1.value():
-        print("Button is released.")
+        log.info("Button is released.")
     else:
-        print("Button is pressed.")
+        log.info("Button is pressed.")
     
     #print(f"---> TransmitRemain: {sysData['PostTimer_rem']} - MeasuringRemain: {sysData['DS1820_rem']}")
-    print(f"downCnt: {maxtimer['downCnt']} - uptime: {sysData['uptime']} - loop: {sysData['loop']}")
-    sysData['loop'] += 5
-    if (maxtimer['downCnt'] == 0):
-        print('maxtimer wird nicht mehr gebraucht')
-        myTimers.stop(maxtimer)
+    #log.info(f"downCnt: {maxtimer['downCnt']} - uptime: {sysData['uptime']}") # - loop: {sysData['loop']}")
+    #sysData['loop'] += 5
+    #if (maxtimer['downCnt'] == 0):
+    #    log.info('maxtimer wird nicht mehr gebraucht')
+    #    myTimers.stop(maxtimer)
         #myTimers.stop(blink)
-        maxtimer = myTimers.append('maxtimer', sysData['loop'])
+        #maxtimer = myTimers.append('maxtimer', sysData['loop'])
     #print("active downConuters:")
     #for t in TM.Timers.timers.items():
     #    print (t)
@@ -83,29 +87,23 @@ def handleMain(timer):
 
 loaded_cfgData = cf.loadConfig()
 if loaded_cfgData[1] == False:
-    print("!!! P A N I K !!! could not load configuration")
+    log.info("!!! P A N I K !!! could not load configuration")
     panik =  myTimers.append("Panik", 25, LED_Timer)
     while True:
         pass
 
 cfgData = loaded_cfgData[1]
-print(f"-----> {cfgData}")
+log.debug(f"-----> {cfgData}")
  
-print("-----> initialize system data timers and variables")   
+log.info("-----> initialize system data and variables")   
 sysData['uptime'] = 0
 sysData['badTrans'] = 0
 sysData['goodTrans'] = 0
 sysData['RSSI'] = 0
 sysData['myTimers'] = TM.Timers()
 sysData['wifi'] = WF.wifi(cfgData, sysData) 
-
 myTimers = sysData['myTimers']
 myWifi = sysData['wifi']
-
-    
-blink = myTimers.append("Blinker", 500, LED_Timer)
-maxtimer = myTimers.append('maxtimer', 1000)
-utimer = myTimers.append('Uptimer', 1000, handleUptimer)
 
 """
 if set.FNC_TYPE == 'DS1820':
@@ -122,16 +120,15 @@ if set.FNC_TYPE == 'DS1820':
     #DSTimer = myTimers.append('DS1820', cfgData['MeasuringCycle'] * 1000, handleDS1820)
 """
 
-#print(blink)
-print("---> Timers: #############################")
-print(maxtimer)
-print(utimer)
-
+log.info("-----> connect to wifi")
 wifi = myWifi.do_connect(cfgData["SSID"], cfgData["password"])
 if (wifi == None):
-    print("OJE!!!")
+    log.info("OJE!!!")
 else:
-    print(f"\r\n{wifi.ifconfig()}")
+    log.info("connected to wifi")
+    sysData['RSSI'] = wifi.status('rssi')
+    log.info(f"RSSI: {sysData['RSSI']} dBm")
+    log.info(f"\r\n{wifi.ifconfig()}")
 
 
 cfgData["IP"] = wifi.ifconfig()[0]
@@ -142,21 +139,29 @@ cfgData['name'] = cfgData['hostname'] + '_' + cfgData['MAC'].replace(':', '_') #
 cfgData["chipID"] = binascii.hexlify(machine.unique_id()).decode()
 cf.saveConfig(cfgData)
 
-print(f"\r\n---> Hello from device: {cfgData['hostname']} <---" )
-print(f"Architecture:      {cfgData['Architecture']}")
-print(f"DEV_TYPE:          {cfgData['Hardware']}")
-print(f"FNC_TYPE:          {cfgData['Type']} ")
-print(f"MAC-Adress:        {cfgData['MAC']}")
-print(f"Network:           {cfgData['SSID']}")
-print(f"IP-Adress:         {cfgData['IP']}")
-print(f"running with configuration:\r\n{cfgData}")
-print("\r\neverything is initialized, let's go ahead now ->\r\n")
+log.info(f"\r\n---> Hello from device: {cfgData['hostname']} <---" )
+log.info(f"Architecture:      {cfgData['Architecture']}")
+log.info(f"DEV_TYPE:          {cfgData['Hardware']}")
+log.info(f"FNC_TYPE:          {cfgData['Type']} ")
+log.info(f"MAC-Adress:        {cfgData['MAC']}")
+log.info(f"Network:           {cfgData['SSID']}")
+log.info(f"IP-Adress:         {cfgData['IP']}")
+log.debug(f"running with configuration:\r\n{cfgData}")
+log.info("everything is initialized, let's go ahead now ->\r\n")
 
-print("---> Directory:")
-print(os.listdir('/'))
-print(" <--- Directory\r\n")
+log.info("---> Directory:")
+log.info(os.listdir('/'))
+log.info(" <--- Directory\r\n")
 
-PostTimer = myTimers.append("PostTimer", cfgData['TransmitCycle'] * 1000, handlePost)
+    
+blink = myTimers.append("Blinker", 500, LED_Timer)
+#maxtimer = myTimers.append('maxtimer', 1000)
+utimer = myTimers.append('Uptimer', 1000, handleUptimer)
+#PostTimer = myTimers.append("PostTimer", cfgData['TransmitCycle'] * 1000, handlePost)
+#print(blink)
+
+log.debug("---> Timers: #############################")
+log.debug(myTimers.timers)
 
 """
 Remainers = [
@@ -177,11 +182,11 @@ for val in Remainers:
         
     #myTimers.stop(maxtimer)
     
-MainTimer = myTimers.append("MainTimer", 500, handleMain)
-#web = ws.webserv(cfgData, sysData)
-#webTimer = myTimers.append("WebTimer", 100, web.do_web())
+#MainTimer = myTimers.append("MainTimer", 500, handleMain)
+web = ws.webserv(cfgData, sysData)
+webTimer = myTimers.append("WebTimer", 100, web.do_web())
 
-print("!!!let's wait 5 seconds !!")
+log.info("!!!let's wait 5 seconds !!")
 time.sleep(5)
 
 #print(TM.Timers('Timer_1', 500, LED_Timer))  
@@ -189,12 +194,15 @@ time.sleep(5)
 #print(TM.Timers.timers)
 
 sysData['loop'] = 475
-print("starting main loop - press CTRL+C to abort")
+log.info("starting main loop - press CTRL+C to abort")
 try:
     while True:
-        print("main loop")
-        print(f"uptime: {sysData['uptime']} - maxtimer downCnt: {maxtimer['downCnt']}   ")
+        log.info("main loop")
+        log.info(f"uptime: {sysData['uptime']}")
         time.sleep(1)
 except KeyboardInterrupt:
-    print("CTRL+C pressed – terminate Threads…")
+    log.info("CTRL+C pressed – terminate Threads…")
     myTimers.stopall()
+    with open('config.json', 'r') as f:
+        log.info(f"this is the last configuration -> {f.read()}")
+    log.info("bye, bye")
