@@ -6,11 +6,11 @@ import binascii
 import json
 
 import wifi as WF
-import webserver as ws
+from webserver import webserv
+from post import Post
 import settings as set
 import timers as TM
 import config as cfg
-import util as ut
 
 from logger import Logger
 log = Logger.getLogger(__name__, level="INFO", logfile="/log.txt")
@@ -157,7 +157,6 @@ log.info(" <--- Directory\r\n")
 blink = myTimers.append("Blinker", 500, LED_Timer)
 #maxtimer = myTimers.append('maxtimer', 1000)
 utimer = myTimers.append('Uptimer', 1000, handleUptimer)
-#PostTimer = myTimers.append("PostTimer", cfgData['TransmitCycle'] * 1000, handlePost)
 #print(blink)
 
 log.debug("---> Timers: #############################")
@@ -177,17 +176,17 @@ def handleRemainers(timer):
 for val in Remainers:
     sysData[val['name']+'_rem'] = 0
     print(f"Remain for {val['name']}: {sysData[val['name']+'_rem']}")
-#remainers = myTimers.append('RemainTimer', 1000, handleRemainers)
-"""
+remainers = myTimers.append('RemainTimer', 1000, handleRemainers)
         
     #myTimers.stop(maxtimer)
     
 #MainTimer = myTimers.append("MainTimer", 500, handleMain)
-web = ws.webserv(cfgData, sysData)
-webTimer = myTimers.append("WebTimer", 100, web.do_web())
+"""
 
-log.info("!!!let's wait 5 seconds !!")
-time.sleep(5)
+transmit = Post(cfgData, sysData)   
+transmit.start() 
+ws = webserv(cfgData, sysData)
+ws.start()
 
 #print(TM.Timers('Timer_1', 500, LED_Timer))  
 #TM.Timers('Timer_2', 1500, taskexample)  
@@ -202,6 +201,8 @@ try:
         time.sleep(1)
 except KeyboardInterrupt:
     log.info("CTRL+C pressed – terminate Threads…")
+    ws.stop()
+    transmit.stop()
     myTimers.stopall()
     with open('config.json', 'r') as f:
         log.info(f"this is the last configuration -> {f.read()}")

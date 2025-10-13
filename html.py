@@ -61,6 +61,7 @@ body {{
 </body>
 </html>
 '''
+
 AppMenu = f'''
 <a href="status">Status</a><br>
 {{appmenu}}
@@ -102,12 +103,10 @@ ConfMenu2= f'''
 <form method='POST' action='/update' enctype='multipart/form-data'><input type='file' name='update'><input type='submit' value='Update'></form>
 '''
 
-
 RadioButton = f'''
 <form>
 <p>mit welchem Netzwerk soll eine Verbindung hergestellt werden?</p>
 '''
-
 
 RadioStart = f'''
 <input type="radio" name="SSID" value="{{SSID}}">  {{CRYPT}}{{SSID}}   ->   (Signal: {{RSSI}})
