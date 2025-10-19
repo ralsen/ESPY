@@ -46,7 +46,6 @@ class Timers():
         while self.is_running:
             log.info("waiting in stop()")
         self.is_running = True
-        log.info(f"stopping timer <{timer['name']}>")
         timer['instance'].deinit()
         ret = self.timers.pop(timer['name'], None)
         self.is_running = False
@@ -57,7 +56,7 @@ class Timers():
         self.is_running = True
         log.info("stopping all timers")
         for name, timer in list(self.timers.items()):
-            log.info(f"stopping timer <{name}>")
+            log.info(f".  -> stopping timer <{name}>")
             timer['instance'].deinit()
             self.timers.pop(name, None)
         self.is_running = False
